@@ -1,3 +1,3 @@
 # ud.api_ts
 
-Usine Data Type script api client
+Usine Data Type script api client library

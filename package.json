@@ -1,0 +1,27 @@
+{
+  "name": "ud.api_ts",
+  "version": "2.0.1",
+  "description": "Usine Data Type script api client library",
+  "author": "hyperboloide",
+  "main": "bundle.js",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://dev.hyperboloide.com/fred/ud.api_ts.git"
+  },
+  "scripts": {
+    "test": "mocha -r ts-node/register src/**/*_test.ts",
+    "build":"webpack && uglifyjs ./bundle.js -c -m -o ./bundle.min.js --source-map ./bundle.min.js.map"
+  },
+  "devDependencies": {
+    "@types/chai": "^3.4.35",
+    "@types/mocha": "^2.2.40",
+    "awesome-typescript-loader": "^3.1.2",
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0",
+    "ts-node": "^2.1.0",
+    "typescript": "^2.2.1",
+    "webpack": "^2.2.1"
+  },
+  "dependencies": {}
+}
