@@ -1,7 +1,8 @@
-import { isEmpty, isObject } from 'lodash';
+import { isEmpty, isObject, each, toSafeInteger } from 'lodash';
 
 import { User } from '../user/user';
-import { Field } from './fields';
+import { Field, extract } from './fields';
+import { FSM } from './fsm';
 
 export class Form {
   url: string;
@@ -15,18 +16,23 @@ export class Form {
   description: string;
 
   fields: Map<number, Field>;
+  fsm: FSM;
 
   serialize(): any {
+    let fields = {};
+    this.fields.forEach((f, id) => fields[`${id}`] = f.serialize());
     return {
       url: this.url,
-      owner: this.owner,
+      owner: this.owner.serialize(),
       created: this.created.toJSON(),
-      updated: this.updated,
+      updated: this.updated.toJSON(),
       proto: this.proto,
       version: this.version,
       states: this.states,
       name: this.name,
       description: this.description,
+      fsm: this.fsm.serialize(),
+      fields: fields,
     }
   }
 
@@ -51,8 +57,15 @@ export class Form {
     this.name = obj.name;
     this.description = obj.description;
 
-    let tmp = new Map<number, Field>();
+    this.fields = new Map<number, Field>();
+    each(obj.fields, (v, k) => {
+      let id = toSafeInteger(k);
+      this.fields.set(id, extract(id, v));
+    })
 
+    if (isObject(obj.fsm)) {
+      this.fsm = new FSM().deserialize(obj.fsm);
+    }
 
     return this;
   }

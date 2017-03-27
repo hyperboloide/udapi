@@ -1,14 +1,16 @@
 import { includes, without, isObject } from 'lodash';
 
+import { ValidableWithList } from '../../interfaces';
 import { Field } from '../fields';
 
-export class State {
+export class State extends ValidableWithList {
   readonly id: number;
   name: string;
   fields: Array<number>;
   nexts: Array<number>;
 
   constructor(id: number) {
+    super();
     this.id = id;
   }
 
@@ -46,6 +48,7 @@ export class State {
 
   serialize(): any {
     return {
+      ...super.serialize(),
       name: this.name,
       fields: this.fields,
       nexts: this.nexts,
@@ -53,6 +56,7 @@ export class State {
   }
 
   deserialize(obj: any): State {
+    super.deserialize(obj);
     if (isObject(obj)) {
       this.name = obj.name;
       this.fields = obj.fields;

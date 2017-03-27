@@ -10,7 +10,7 @@
     "url": "https://dev.hyperboloide.com/fred/ud.api_ts.git"
   },
   "scripts": {
-    "test": "mocha -r ts-node/register src/**/*_test.ts",
+    "test": "mocha --recursive -r ts-node/register `find src -name '*_test.ts'`",
     "build": "webpack && babel bundle.js --out-file bundle.js --source-maps",
     "prepublish": "npm run build"
   },

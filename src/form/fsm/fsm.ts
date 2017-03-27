@@ -60,10 +60,9 @@ export class FSM {
     return res;
   }
 
-
   serialize(): any {
     let tmp = {};
-    this.states.forEach((id, s) => tmp[`${id}`] = s);
+    this.states.forEach((s, id) => tmp[`${id}`] = s.serialize());
     return {
       initial: this.initial.id,
       states: tmp,
@@ -72,7 +71,7 @@ export class FSM {
 
   deserialize(obj: any): FSM {
     this.states = new Map();
-    if (isObject(obj)) {
+    if (isObject(obj.states)) {
       each(obj.states, (v, k) => {
         let id = toSafeInteger(k);
         this.states.set(id, new State(id).deserialize(v));

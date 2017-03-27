@@ -1,47 +1,41 @@
-import { isEmpty } from 'lodash';
+import { isEmpty, isArray } from 'lodash';
 
-export abstract class Field {
+import { ValidableWithList } from '../../interfaces';
+
+export abstract class Field extends ValidableWithList {
   readonly id: number;
   name: string = "";
   help: string = "";
   mandatory: boolean = false;
-  errors: any;
 
   abstract type(): string;
 
   constructor(id: number) {
+    super();
     this.id = id;
   }
 
-  setErrors(errors: any) {
-    this.errors = errors;
-  }
-
-  removeErrors() {
-    delete this.errors;
-  }
-
-  hasErrors() {
-    return !isEmpty(this.errors);
-  }
-
   serialize(): any {
-    return {
+    let res = {
+      ...super.serialize(),
       name: this.name,
       type: this.type(),
-      help: this.help,
       mandatory: this.mandatory,
     }
+    if (!isEmpty(this.help)) {
+      res['help'] = this.help;
+    }
+    return res
   }
 
   deserialize(obj: any): Field {
+    super.deserialize(obj);
     if (isEmpty(obj)) {
       return this;
     }
     this.name = obj.name;
     this.help = obj.help;
     this.mandatory = obj.mandatory;
-
     return this;
   }
 }

@@ -1,5 +1,6 @@
+import { Serializable } from '../interfaces/serializable';
 
-export class User {
+export class User implements Serializable {
   id: number;
   name: string;
   picture: string;

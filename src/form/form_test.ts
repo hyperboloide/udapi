@@ -9,13 +9,40 @@ const example = {
     name: "test",
     picture: "img.jpg",
   },
-  created: "2017-02-17T13:06:32.096363Z",
-  updated: "2017-03-17T13:06:32.096363Z",
+  created: "2017-02-17T13:06:32.096Z",
+  updated: "2017-03-17T13:06:32.096Z",
   proto: 2,
   version: 4,
   states: true,
   name: "test form",
-  description: "some test form."
+  description: "some test form.",
+  fields: {
+    "3": {
+      name: "example",
+      help: "help",
+      mandatory: true,
+      type: "boolean",
+      errors: [
+        {code: "some.error.code", data: {id: 42}},
+        {code: "some.error.code", data: {id: 32}}
+      ]
+    }
+  },
+  fsm: {
+    initial: 1,
+    states: {
+      "1": {
+        name: "example state1",
+        fields: [3],
+        nexts: [2],
+      },
+      "2": {
+        name: "example state 2",
+        fields: [],
+        nexts: [],
+      }
+    },
+  }
 }
 
 describe('form', () => {
@@ -29,9 +56,7 @@ describe('form', () => {
   it('should serialize', () => {
     let f = new Form().deserialize(example)
     let obj = f.serialize()
-
-    // expect(obj.created).to.equal(example.created);
-    // expect(isEqual(obj, example)).to.equal(true);
+    expect(isEqual(obj, example)).to.equal(true);
   });
 
 });

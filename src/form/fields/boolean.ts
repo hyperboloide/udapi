@@ -1,3 +1,5 @@
+import { isEmpty, } from 'lodash';
+
 import { Field } from './field';
 
 export class Boolean extends Field {
@@ -9,18 +11,20 @@ export class Boolean extends Field {
   }
 
   serialize(): any {
-    return {
-      ...super.serialize(),
-      label: this.label,
-      default: this.default,
+    let res = super.serialize();
+    if (!isEmpty(this.label)) {
+      res['label'] = this.label;
     }
+    if (!isEmpty(this.default)) {
+      res['default'] = this.default;
+    }
+    return res;
   }
 
   deserialize(obj: any): Boolean {
     super.deserialize(obj);
     this.label = obj.label;
     this.default = obj.default;
-
     return this;
   }
 }
