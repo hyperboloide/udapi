@@ -11,9 +11,10 @@
   },
   "scripts": {
     "test": "mocha -r ts-node/register src/**/*_test.ts",
-    "build":"webpack && uglifyjs ./bundle.js -c -m -o ./bundle.min.js --source-map ./bundle.min.js.map"
+    "build": "webpack"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.58",
     "@types/chai": "^3.4.35",
     "@types/mocha": "^2.2.40",
     "awesome-typescript-loader": "^3.1.2",
@@ -21,7 +22,8 @@
     "mocha": "^3.2.0",
     "ts-node": "^2.1.0",
     "typescript": "^2.2.1",
-    "webpack": "^2.2.1"
+    "webpack": "^2.3.2",
+    "lodash": "^4.17.4"
   },
   "dependencies": {}
 }

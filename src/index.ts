@@ -1,3 +1,2 @@
-import { person } from "./person";
-
-console.log(person.firstName + ' ' + person.lastName);
+export * from "./user";
+export * from "./form";
