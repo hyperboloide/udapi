@@ -1,5 +1,6 @@
 import { isEmpty, isObject, each, toSafeInteger, map, last, head } from 'lodash';
 
+import { ValidableObject } from '../interfaces';
 import { User } from '../user/user';
 import { Section } from './section';
 import { Field, extract } from './field';
@@ -7,7 +8,7 @@ import { FSM } from './fsm';
 import { Displayable } from './displayable';
 
 
-export class Form {
+export class Form extends ValidableObject {
   url: string = "";
   owner: User;
   created: Date;
@@ -63,6 +64,7 @@ export class Form {
     this.sections.forEach((s, id) => sections[`${id}`] = s.serialize());
 
     return {
+      ...super.serialize(),
       url: this.url,
       owner: this.owner.serialize(),
       created: this.created.toJSON(),
@@ -80,6 +82,8 @@ export class Form {
   }
 
   deserialize(obj: any): Form {
+    super.deserialize(obj);
+
     if (isEmpty(obj)) {
       return this;
     }

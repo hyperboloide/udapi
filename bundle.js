@@ -574,24 +574,30 @@ exports["udApi"] =
 
     Object.defineProperty(exports, "__esModule", { value: true });
     var lodash_1 = __webpack_require__(0);
+    var interfaces_1 = __webpack_require__(1);
     var user_1 = __webpack_require__(7);
     var section_1 = __webpack_require__(6);
     var field_1 = __webpack_require__(3);
     var fsm_1 = __webpack_require__(4);
 
-    var Form = function () {
+    var Form = function (_interfaces_1$Validab4) {
+        _inherits(Form, _interfaces_1$Validab4);
+
         function Form() {
             _classCallCheck(this, Form);
 
-            this.url = "";
-            this.proto = 2;
-            this.version = 0;
-            this.states = false;
-            this.name = "";
-            this.description = "";
-            this.fields = new Map();
-            this.sections = new Map();
-            this.display = new Array();
+            var _this6 = _possibleConstructorReturn(this, (Form.__proto__ || Object.getPrototypeOf(Form)).apply(this, arguments));
+
+            _this6.url = "";
+            _this6.proto = 2;
+            _this6.version = 0;
+            _this6.states = false;
+            _this6.name = "";
+            _this6.description = "";
+            _this6.fields = new Map();
+            _this6.sections = new Map();
+            _this6.display = new Array();
+            return _this6;
         }
 
         _createClass(Form, [{
@@ -647,27 +653,14 @@ exports["udApi"] =
                 this.sections.forEach(function (s, id) {
                     return sections['' + id] = s.serialize();
                 });
-                return {
-                    url: this.url,
-                    owner: this.owner.serialize(),
-                    created: this.created.toJSON(),
-                    updated: this.updated.toJSON(),
-                    proto: this.proto,
-                    version: this.version,
-                    states: this.states,
-                    name: this.name,
-                    description: this.description,
-                    fields: fields,
-                    sections: sections,
-                    display: this.display,
-                    fsm: this.fsm.serialize()
-                };
+                return Object.assign({}, _get(Form.prototype.__proto__ || Object.getPrototypeOf(Form.prototype), 'serialize', this).call(this), { url: this.url, owner: this.owner.serialize(), created: this.created.toJSON(), updated: this.updated.toJSON(), proto: this.proto, version: this.version, states: this.states, name: this.name, description: this.description, fields: fields, sections: sections, display: this.display, fsm: this.fsm.serialize() });
             }
         }, {
             key: 'deserialize',
             value: function deserialize(obj) {
-                var _this6 = this;
+                var _this7 = this;
 
+                _get(Form.prototype.__proto__ || Object.getPrototypeOf(Form.prototype), 'deserialize', this).call(this, obj);
                 if (lodash_1.isEmpty(obj)) {
                     return this;
                 }
@@ -689,12 +682,12 @@ exports["udApi"] =
                 this.fields = new Map();
                 lodash_1.each(obj.fields, function (v, k) {
                     var id = lodash_1.toSafeInteger(k);
-                    _this6.fields.set(id, field_1.extract(id, v));
+                    _this7.fields.set(id, field_1.extract(id, v));
                 });
                 this.sections = new Map();
                 lodash_1.each(obj.sections, function (v, k) {
                     var id = lodash_1.toSafeInteger(k);
-                    _this6.sections.set(id, new section_1.Section(id).deserialize(v));
+                    _this7.sections.set(id, new section_1.Section(id).deserialize(v));
                 });
                 this.display = lodash_1.map(obj.display, lodash_1.toSafeInteger);
                 if (lodash_1.isObject(obj.fsm)) {
@@ -705,7 +698,7 @@ exports["udApi"] =
         }]);
 
         return Form;
-    }();
+    }(interfaces_1.ValidableObject);
 
     exports.Form = Form;
 
@@ -718,11 +711,16 @@ exports["udApi"] =
 
     Object.defineProperty(exports, "__esModule", { value: true });
     var lodash_1 = __webpack_require__(0);
+    var interfaces_1 = __webpack_require__(1);
     var state_1 = __webpack_require__(5);
 
-    var FSM = function () {
+    var FSM = function (_interfaces_1$Validab5) {
+        _inherits(FSM, _interfaces_1$Validab5);
+
         function FSM() {
             _classCallCheck(this, FSM);
+
+            return _possibleConstructorReturn(this, (FSM.__proto__ || Object.getPrototypeOf(FSM)).apply(this, arguments));
         }
 
         _createClass(FSM, [{
@@ -837,27 +835,73 @@ exports["udApi"] =
                 return res;
             }
         }, {
+            key: 'hasChildErrors',
+            value: function hasChildErrors() {
+                var _iteratorNormalCompletion3 = true;
+                var _didIteratorError3 = false;
+                var _iteratorError3 = undefined;
+
+                try {
+                    for (var _iterator3 = this.states.values()[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                        var child = _step3.value;
+
+                        if (child.hasErrors()) {
+                            return true;
+                        }
+                    }
+                } catch (err) {
+                    _didIteratorError3 = true;
+                    _iteratorError3 = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                            _iterator3.return();
+                        }
+                    } finally {
+                        if (_didIteratorError3) {
+                            throw _iteratorError3;
+                        }
+                    }
+                }
+
+                return false;
+            }
+        }, {
+            key: 'setErrors',
+            value: function setErrors(obj) {
+                var _this9 = this;
+
+                _get(FSM.prototype.__proto__ || Object.getPrototypeOf(FSM.prototype), 'setErrors', this).call(this, obj);
+                if (lodash_1.has(obj, 'states.items')) {
+                    var items = obj.states.items;
+                    lodash_1.each(items, function (v, k) {
+                        var id = lodash_1.toSafeInteger(k);
+                        if (_this9.has(id)) {
+                            _this9.get(id).setErrors(v);
+                        }
+                    });
+                }
+            }
+        }, {
             key: 'serialize',
             value: function serialize() {
                 var tmp = {};
                 this.states.forEach(function (s, id) {
                     return tmp['' + id] = s.serialize();
                 });
-                return {
-                    initial: this.initial.id,
-                    states: tmp
-                };
+                return Object.assign({}, _get(FSM.prototype.__proto__ || Object.getPrototypeOf(FSM.prototype), 'serialize', this).call(this), { initial: this.initial.id, states: tmp });
             }
         }, {
             key: 'deserialize',
             value: function deserialize(obj) {
-                var _this7 = this;
+                var _this10 = this;
 
+                _get(FSM.prototype.__proto__ || Object.getPrototypeOf(FSM.prototype), 'deserialize', this).call(this, obj);
                 this.states = new Map();
                 if (lodash_1.isObject(obj.states)) {
                     lodash_1.each(obj.states, function (v, k) {
                         var id = lodash_1.toSafeInteger(k);
-                        _this7.states.set(id, new state_1.State(id).deserialize(v));
+                        _this10.states.set(id, new state_1.State(id).deserialize(v));
                     });
                     this.initial = this.states.get(lodash_1.toSafeInteger(obj.initial));
                 }
@@ -866,7 +910,7 @@ exports["udApi"] =
         }]);
 
         return FSM;
-    }();
+    }(interfaces_1.ValidableObject);
 
     exports.FSM = FSM;
 
@@ -952,27 +996,27 @@ exports["udApi"] =
             key: 'serialize',
             value: function serialize() {
                 var res = [];
-                var _iteratorNormalCompletion3 = true;
-                var _didIteratorError3 = false;
-                var _iteratorError3 = undefined;
+                var _iteratorNormalCompletion4 = true;
+                var _didIteratorError4 = false;
+                var _iteratorError4 = undefined;
 
                 try {
-                    for (var _iterator3 = this.errors[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                        var e = _step3.value;
+                    for (var _iterator4 = this.errors[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                        var e = _step4.value;
 
                         res.push(e.serialize());
                     }
                 } catch (err) {
-                    _didIteratorError3 = true;
-                    _iteratorError3 = err;
+                    _didIteratorError4 = true;
+                    _iteratorError4 = err;
                 } finally {
                     try {
-                        if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                            _iterator3.return();
+                        if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                            _iterator4.return();
                         }
                     } finally {
-                        if (_didIteratorError3) {
-                            throw _iteratorError3;
+                        if (_didIteratorError4) {
+                            throw _iteratorError4;
                         }
                     }
                 }
@@ -987,12 +1031,12 @@ exports["udApi"] =
         }, {
             key: '_extract',
             value: function _extract(obj) {
-                var _this8 = this;
+                var _this11 = this;
 
                 this.errors = new Array();
                 if (lodash_1.isArray(obj)) {
                     lodash_1.each(obj, function (e) {
-                        return _this8.errors.push(new ValidationError().deserialize(e));
+                        return _this11.errors.push(new ValidationError().deserialize(e));
                     });
                 }
                 return this;
@@ -1017,6 +1061,11 @@ exports["udApi"] =
                 return this.errors.size > 0;
             }
         }, {
+            key: 'hasChildErrors',
+            value: function hasChildErrors() {
+                return false;
+            }
+        }, {
             key: 'setErrors',
             value: function setErrors(obj) {
                 this._extract(obj);
@@ -1036,18 +1085,21 @@ exports["udApi"] =
         }, {
             key: 'deserialize',
             value: function deserialize(obj) {
-                return this._extract(obj);
+                return this._extract(obj.errors);
             }
         }, {
             key: '_extract',
             value: function _extract(obj) {
-                var _this9 = this;
+                var _this12 = this;
 
                 this.errors = new Map();
-                if (lodash_1.isObject(obj.errors)) {
-                    lodash_1.each(obj.errors, function (v, k) {
+                if (lodash_1.isObject(obj)) {
+                    lodash_1.each(obj, function (v, k) {
                         var id = lodash_1.toSafeInteger(k);
-                        _this9.errors.set(k, new ValidationList().deserialize(v));
+                        var l = new ValidationList().deserialize(v);
+                        if (l.hasErrors()) {
+                            _this12.errors.set(k, l);
+                        }
                     });
                 }
                 return this;

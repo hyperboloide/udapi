@@ -75,6 +75,10 @@ export class ValidableObject implements ValidationContainer, Serializable {
     return this.errors.size > 0;
   }
 
+  hasChildErrors(): boolean {
+    return false;
+  }
+
   setErrors(obj: any) {
     this._extract(obj);
   }
@@ -89,15 +93,18 @@ export class ValidableObject implements ValidationContainer, Serializable {
   }
 
   deserialize(obj: any): ValidableObject {
-    return this._extract(obj);
+    return this._extract(obj.errors);
   }
 
   private _extract(obj: any): ValidableObject {
     this.errors = new Map();
-    if (isObject(obj.errors)) {
-      each(obj.errors, (v, k) => {
+    if (isObject(obj)) {
+      each(obj, (v, k) => {
         let id = toSafeInteger(k);
-        this.errors.set(k, new ValidationList().deserialize(v));
+        let l = new ValidationList().deserialize(v);
+        if (l.hasErrors()) {
+            this.errors.set(k, l);
+        }
       });
     }
     return this;
