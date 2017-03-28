@@ -1,4 +1,4 @@
-import { each, toSafeInteger, isObject, has, every } from 'lodash';
+import { each, toSafeInteger, isObject, has } from 'lodash';
 
 import { ValidableObject } from '../../interfaces';
 import { State } from './state';
