@@ -1,8 +1,9 @@
-import { Form } from "./form";
 import { expect } from 'chai';
 import { isEqual } from 'lodash';
 
-const example = {
+import { Form } from "./form";
+
+export const ExampleForm = {
   url: "test-form",
   owner: {
     id: 42,
@@ -22,12 +23,17 @@ const example = {
       help: "help",
       mandatory: true,
       type: "boolean",
-      errors: [
-        {code: "some.error.code", data: {id: 42}},
-        {code: "some.error.code", data: {id: 32}}
-      ]
+      errors:
+        {
+          name: [{code: "some.error.code", data: {id: 42}}],
+          help: [{code: "some.error.code", data: {id: 32}}],
+        }
     }
   },
+  sections: {
+    "4": { html: "<h1>Section</h1>" },
+  },
+  display: [3],
   fsm: {
     initial: 1,
     states: {
@@ -47,16 +53,16 @@ const example = {
 
 describe('form', () => {
   it('should deserialize', () => {
-    let f = new Form().deserialize(example);
+    let f = new Form().deserialize(ExampleForm);
     expect(f.url).to.equal("test-form");
     expect(f.created.getMonth()).to.equal(1);
     expect(f.updated.getMonth()).to.equal(2);
   });
 
   it('should serialize', () => {
-    let f = new Form().deserialize(example)
+    let f = new Form().deserialize(ExampleForm)
     let obj = f.serialize()
-    expect(isEqual(obj, example)).to.equal(true);
+    expect(isEqual(obj, ExampleForm)).to.equal(true);
   });
 
 });

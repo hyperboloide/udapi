@@ -1,15 +1,11 @@
-import { Serializable } from './serializable';
+import { Serializable } from './basic';
 
 import { each, isArray, isObject, toSafeInteger, isEmpty } from 'lodash';
 
-export interface ValidationContainer {
-  hasError(): boolean
-}
-
-export interface Validable extends Serializable {
-  setErrors(errors: any);
+export interface ValidationContainer extends Serializable {
+  errors: any;
   hasErrors(): boolean;
-  clearErrors();
+  setErrors(errors: any);
 }
 
 export class ValidationError implements Serializable {
@@ -31,15 +27,19 @@ export class ValidationError implements Serializable {
 
 }
 
-export class ValidationList implements ValidationContainer, Serializable{
-  errors: Array<ValidationError>;
+export class ValidationList implements ValidationContainer {
+  errors: Array<ValidationError> = new Array();
 
-  hasError(): boolean {
+  hasErrors(): boolean {
     return this.errors.length > 0;
   }
 
+  setErrors(obj: any) {
+    this._extract(obj);
+  }
+
   first(): ValidationError {
-    if (this.hasError()) {
+    if (this.hasErrors()) {
       return this.errors[0];
     }
   }
@@ -52,75 +52,96 @@ export class ValidationList implements ValidationContainer, Serializable{
     return res;
   }
 
-
   deserialize(obj: any): ValidationList {
-    this.errors = new Array<ValidationError>();
+    return this._extract(obj);
+  }
+
+  private _extract(obj: any): ValidationList {
+    this.errors = new Array();
     if (isArray(obj)) {
       each(obj, (e) =>
         this.errors.push(new ValidationError().deserialize(e)));
     }
     return this;
   }
+
 }
 
-export class ValidationMap implements ValidationContainer, Serializable {
-  errors: Map<number, ValidationError>;
 
-  hasError(): boolean {
+export class ValidableObject implements ValidationContainer, Serializable {
+  errors: Map<string, ValidationList> = new Map();
+
+  hasErrors(): boolean {
     return this.errors.size > 0;
+  }
+
+  setErrors(obj: any) {
+    this._extract(obj);
   }
 
   serialize(): any {
     let res = {};
     this.errors.forEach((e, id) => res[`${id}`] = e.serialize());
-    return res;
+    if (isEmpty(res)) {
+      return {};
+    }
+    return {errors: res};
   }
 
+  deserialize(obj: any): ValidableObject {
+    return this._extract(obj);
+  }
 
-  deserialize(obj: any): ValidationMap {
+  private _extract(obj: any): ValidableObject {
     this.errors = new Map();
-    if (isObject(obj)) {
-      each(obj, (v, k) => {
+    if (isObject(obj.errors)) {
+      each(obj.errors, (v, k) => {
         let id = toSafeInteger(k);
-        this.errors.set(id, new ValidationError().deserialize(v));
+        this.errors.set(k, new ValidationList().deserialize(v));
       });
     }
     return this;
   }
 }
 
-export abstract class ValidableWithList implements Validable {
-  errors: ValidationList;
 
-  constructor() {
-    this.errors = new ValidationList();
-  }
-
-  setErrors(obj: any) {
-    this.errors = new ValidationList();
-    if (!isEmpty(obj) || isArray(obj)) {
-      this.errors.deserialize(obj)
-    }
-  }
-
-  clearErrors() {
-    delete this.errors;
-  }
-
-  hasErrors(): boolean {
-    return !isEmpty(this.errors) && this.errors.hasError();
-  }
-
-  serialize(): any {
-    if (this.hasErrors()) {
-      return {errors: this.errors.serialize()};
-    }
-    return {}
-  }
-
-  deserialize(obj: any): ValidableWithList {
-    this.setErrors(obj.errors);
-    return this;
-  }
-
-}
+//
+// export class ValidationList implements ValidationContainer, Serializable{
+//   errors: Array<ValidationError>;
+//
+//   hasErrors(): boolean {
+//     return this.errors.length > 0;
+//   }
+//
+//   setErrors(errs: any) {
+//     this.errors = new Array<ValidationError>();
+//     if (isArray(obj)) {
+//       each(obj, (e) =>
+//         this.errors.push(new ValidationError().deserialize(e)));
+//     }
+//   }
+//
+//   // first(): ValidationError {
+//   //   if (this.hasErrors()) {
+//   //     return this.errors[0];
+//   //   }
+//   // }
+//
+//   serialize(): any {
+//     let res = [];
+//     for (let e of this.errors) {
+//       res.push(e.serialize());
+//     }
+//     return res;
+//   }
+//
+//
+//   deserialize(obj: any): ValidationList {
+//     this.errors = new Array<ValidationError>();
+//     if (isArray(obj)) {
+//       each(obj, (e) =>
+//         this.errors.push(new ValidationError().deserialize(e)));
+//     }
+//     return this;
+//   }
+// }

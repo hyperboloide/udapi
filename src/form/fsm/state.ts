@@ -1,9 +1,9 @@
 import { includes, without, isObject } from 'lodash';
 
-import { ValidableWithList } from '../../interfaces';
-import { Field } from '../fields';
+import { ValidableObject } from '../../interfaces';
+import { Field } from '../field';
 
-export class State extends ValidableWithList {
+export class State extends ValidableObject {
   readonly id: number;
   name: string;
   fields: Array<number>;

@@ -1,26 +1,67 @@
-import { isEmpty, isObject, each, toSafeInteger } from 'lodash';
+import { isEmpty, isObject, each, toSafeInteger, map, last, head } from 'lodash';
 
 import { User } from '../user/user';
-import { Field, extract } from './fields';
+import { Section } from './section';
+import { Field, extract } from './field';
 import { FSM } from './fsm';
+import { Displayable } from './displayable';
+
 
 export class Form {
-  url: string;
+  url: string = "";
   owner: User;
   created: Date;
   updated: Date;
-  proto: number;
-  version: number;
-  states: boolean;
-  name: string;
-  description: string;
+  proto: number = 2;
+  version: number = 0;
+  states: boolean = false;
+  name: string = "";
+  description: string = "";
 
-  fields: Map<number, Field>;
+  fields: Map<number, Field> = new Map();
+  sections: Map<number, Section> = new Map();
+  display: Array<number> = new Array();
   fsm: FSM;
+
+  isEmpty(): boolean {
+    return this.fields.size == 0;
+  }
+
+  isNew(): boolean {
+    return this.version == 0;
+  }
+
+  hasField(id: number): boolean {
+    return this.fields.has(id);
+  }
+
+  getField(id: number): Field {
+    return this.fields.get(id);
+  }
+
+  getSection(id: number): Section {
+    return this.sections.get(id);
+  }
+
+  displayIndex(obj: Displayable): number {
+    return this.display.findIndex((id) => id == obj.id);
+  }
+
+  displayCanMoveDown(obj: Displayable): boolean {
+    return obj.id != last(this.display);
+  }
+
+  displayCanMoveUp(obj: Displayable): boolean {
+     return obj.id != head(this.display);
+  }
 
   serialize(): any {
     let fields = {};
     this.fields.forEach((f, id) => fields[`${id}`] = f.serialize());
+
+    let sections = {};
+    this.sections.forEach((s, id) => sections[`${id}`] = s.serialize());
+
     return {
       url: this.url,
       owner: this.owner.serialize(),
@@ -31,8 +72,10 @@ export class Form {
       states: this.states,
       name: this.name,
       description: this.description,
-      fsm: this.fsm.serialize(),
       fields: fields,
+      sections: sections,
+      display: this.display,
+      fsm: this.fsm.serialize(),
     }
   }
 
@@ -57,11 +100,19 @@ export class Form {
     this.name = obj.name;
     this.description = obj.description;
 
-    this.fields = new Map<number, Field>();
+    this.fields = new Map();
     each(obj.fields, (v, k) => {
       let id = toSafeInteger(k);
       this.fields.set(id, extract(id, v));
     })
+
+    this.sections = new Map();
+    each(obj.sections, (v, k) => {
+      let id = toSafeInteger(k);
+      this.sections.set(id, new Section(id).deserialize(v));
+    })
+
+    this.display = map(obj.display, toSafeInteger);
 
     if (isObject(obj.fsm)) {
       this.fsm = new FSM().deserialize(obj.fsm);

@@ -3,8 +3,8 @@ import { isEmpty, } from 'lodash';
 import { Field } from './field';
 
 export class Boolean extends Field {
-  label: string = "";
-  default: boolean = false;
+  label: string;
+  default: boolean;
 
   type(): string {
     return "boolean";
@@ -23,8 +23,12 @@ export class Boolean extends Field {
 
   deserialize(obj: any): Boolean {
     super.deserialize(obj);
-    this.label = obj.label;
-    this.default = obj.default;
+    if (!isEmpty(this.label)) {
+      this.label = obj.label;
+    }
+    if (!isEmpty(this.default)) {
+      this.default = obj.default;
+    }
     return this;
   }
 }

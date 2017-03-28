@@ -1,8 +1,9 @@
 import { isEmpty, isArray } from 'lodash';
 
-import { ValidableWithList } from '../../interfaces';
+import { Displayable } from '../displayable';
+import { ValidableObject } from '../../interfaces';
 
-export abstract class Field extends ValidableWithList {
+export abstract class Field extends ValidableObject implements Displayable {
   readonly id: number;
   name: string = "";
   help: string = "";

@@ -1,9 +1,10 @@
 import { each, toSafeInteger, isObject, map } from 'lodash';
 
+import { ValidableObject } from '../../interfaces';
 import { State } from './state';
-import { Field } from '../fields';
+import { Field } from '../field';
 
-export class FSM {
+export class FSM extends ValidableObject {
   initial: State;
   states: Map<number, State>;
 
@@ -64,12 +65,14 @@ export class FSM {
     let tmp = {};
     this.states.forEach((s, id) => tmp[`${id}`] = s.serialize());
     return {
+      ...super.serialize(),
       initial: this.initial.id,
       states: tmp,
     };
   }
 
   deserialize(obj: any): FSM {
+    super.deserialize(obj);
     this.states = new Map();
     if (isObject(obj.states)) {
       each(obj.states, (v, k) => {

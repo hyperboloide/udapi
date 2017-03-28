@@ -1,4 +1,4 @@
-import { Serializable } from '../interfaces/serializable';
+import { Serializable } from '../interfaces/basic';
 
 export class User implements Serializable {
   id: number;

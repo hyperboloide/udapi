@@ -9,10 +9,11 @@ const example = {
   help: "help",
   mandatory: true,
   type: "boolean",
-  errors: [
-    {code: "some.error.code", data: {id: 42}},
-    {code: "some.error.code", data: {id: 32}}
-  ]
+  errors:
+    {
+      name: [{code: "some.error.code", data: {id: 42}}],
+      help: [{code: "some.error.code", data: {id: 32}}],
+    }
 }
 
 describe('field', () => {
@@ -24,8 +25,10 @@ describe('field', () => {
     expect(f.mandatory).to.equal(true);
     expect(f.type()).to.equal("boolean");
     expect(f.hasErrors()).to.equal(true);
-    expect(f.errors.first().code).to.equal("some.error.code");
-    expect(isEqual(f.errors.first().data, {id: 42})).to.equal(true);
+
+    //let errs = f.getErrors();
+    expect(f.errors.get('name').first().code).to.equal("some.error.code");
+    expect(isEqual(f.errors.get('name').first().data, {id: 42})).to.equal(true);
   });
 
   it('should serialize', () => {

@@ -6,6 +6,7 @@ const example = {
   name: "example state",
   fields: [1, 2, 3],
   nexts: [4, 5, 6],
+  errors: { name: [{code: "some.error.code", data: {id: 42}}] }
 }
 
 describe('state', () => {

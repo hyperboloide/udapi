@@ -1,2 +1,2 @@
-export { FSM } from "./fsm";
-export { State } from "./state";
+export * from './fsm';
+export * from './state';

@@ -1,14 +1,14 @@
 'use strict';
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 exports["udApi"] =
 /******/function (modules) {
@@ -89,7 +89,7 @@ exports["udApi"] =
     /******/__webpack_require__.p = "";
     /******/
     /******/ // Load entry module and return exports
-    /******/return __webpack_require__(__webpack_require__.s = 13);
+    /******/return __webpack_require__(__webpack_require__.s = 14);
     /******/
 }(
 /************************************************************************/
@@ -112,7 +112,8 @@ exports["udApi"] =
         }
     }
     Object.defineProperty(exports, "__esModule", { value: true });
-    __export(__webpack_require__(8));
+    ;
+    __export(__webpack_require__(15));
 
     /***/
 },
@@ -123,65 +124,48 @@ exports["udApi"] =
 
     Object.defineProperty(exports, "__esModule", { value: true });
     var lodash_1 = __webpack_require__(0);
-    var errors_1 = __webpack_require__(1);
+    var interfaces_1 = __webpack_require__(1);
 
-    var Field = function () {
+    var Field = function (_interfaces_1$Validab) {
+        _inherits(Field, _interfaces_1$Validab);
+
         function Field(id) {
             _classCallCheck(this, Field);
 
-            this.name = "";
-            this.help = "";
-            this.mandatory = false;
-            this.id = id;
+            var _this = _possibleConstructorReturn(this, (Field.__proto__ || Object.getPrototypeOf(Field)).call(this));
+
+            _this.name = "";
+            _this.help = "";
+            _this.mandatory = false;
+            _this.id = id;
+            return _this;
         }
 
         _createClass(Field, [{
-            key: 'setErrors',
-            value: function setErrors(errors) {
-                this.errors = errors;
-            }
-        }, {
-            key: 'removeErrors',
-            value: function removeErrors() {
-                delete this.errors;
-            }
-        }, {
-            key: 'hasErrors',
-            value: function hasErrors() {
-                return !lodash_1.isEmpty(this.errors);
-            }
-        }, {
             key: 'serialize',
             value: function serialize() {
-                var res = {
-                    name: this.name,
-                    type: this.type(),
-                    help: this.help,
-                    mandatory: this.mandatory
-                };
-                if (this.errors.hasError()) {
-                    res['errors'] = this.errors.serialize();
+                var res = Object.assign({}, _get(Field.prototype.__proto__ || Object.getPrototypeOf(Field.prototype), 'serialize', this).call(this), { name: this.name, type: this.type(), mandatory: this.mandatory });
+                if (!lodash_1.isEmpty(this.help)) {
+                    res['help'] = this.help;
                 }
                 return res;
             }
         }, {
             key: 'deserialize',
             value: function deserialize(obj) {
+                _get(Field.prototype.__proto__ || Object.getPrototypeOf(Field.prototype), 'deserialize', this).call(this, obj);
                 if (lodash_1.isEmpty(obj)) {
                     return this;
                 }
                 this.name = obj.name;
                 this.help = obj.help;
                 this.mandatory = obj.mandatory;
-                if (lodash_1.isArray(obj.errors) && !lodash_1.isEmpty(obj.errors)) {
-                    this.errors = new errors_1.ValidationList().deserialize(obj.errors);
-                }
                 return this;
             }
         }]);
 
         return Field;
-    }();
+    }(interfaces_1.ValidableObject);
 
     exports.Field = Field;
 
@@ -193,10 +177,31 @@ exports["udApi"] =
     "use strict";
 
     Object.defineProperty(exports, "__esModule", { value: true });
-    var fsm_1 = __webpack_require__(12);
-    exports.FSM = fsm_1.FSM;
-    var state_1 = __webpack_require__(4);
-    exports.State = state_1.State;
+    var lodash_1 = __webpack_require__(0);
+    var field_1 = __webpack_require__(2);
+    exports.Field = field_1.Field;
+    var boolean_1 = __webpack_require__(11);
+    exports.Boolean = boolean_1.Boolean;
+    function create(id, type) {
+        switch (type) {
+            case "boolean":
+                return new boolean_1.Boolean(id);
+            default:
+                return null;
+        }
+    }
+    exports.create = create;
+    function extract(id, obj) {
+        if (!lodash_1.isString(obj.type)) {
+            return null;
+        }
+        var res = create(id, obj.type);
+        if (!lodash_1.isEmpty(res)) {
+            res.deserialize(obj);
+        }
+        return res;
+    }
+    exports.extract = extract;
 
     /***/
 },
@@ -205,14 +210,36 @@ exports["udApi"] =
 
     "use strict";
 
+    function __export(m) {
+        for (var p in m) {
+            if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+        }
+    }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    __export(__webpack_require__(13));
+    __export(__webpack_require__(5));
+
+    /***/
+},
+/* 5 */
+/***/function (module, exports, __webpack_require__) {
+
+    "use strict";
+
     Object.defineProperty(exports, "__esModule", { value: true });
     var lodash_1 = __webpack_require__(0);
+    var interfaces_1 = __webpack_require__(1);
 
-    var State = function () {
+    var State = function (_interfaces_1$Validab2) {
+        _inherits(State, _interfaces_1$Validab2);
+
         function State(id) {
             _classCallCheck(this, State);
 
-            this.id = id;
+            var _this2 = _possibleConstructorReturn(this, (State.__proto__ || Object.getPrototypeOf(State)).call(this));
+
+            _this2.id = id;
+            return _this2;
         }
 
         _createClass(State, [{
@@ -257,15 +284,12 @@ exports["udApi"] =
         }, {
             key: 'serialize',
             value: function serialize() {
-                return {
-                    name: this.name,
-                    fields: this.fields,
-                    nexts: this.nexts
-                };
+                return Object.assign({}, _get(State.prototype.__proto__ || Object.getPrototypeOf(State.prototype), 'serialize', this).call(this), { name: this.name, fields: this.fields, nexts: this.nexts });
             }
         }, {
             key: 'deserialize',
             value: function deserialize(obj) {
+                _get(State.prototype.__proto__ || Object.getPrototypeOf(State.prototype), 'deserialize', this).call(this, obj);
                 if (lodash_1.isObject(obj)) {
                     this.name = obj.name;
                     this.fields = obj.fields;
@@ -276,13 +300,54 @@ exports["udApi"] =
         }]);
 
         return State;
-    }();
+    }(interfaces_1.ValidableObject);
 
     exports.State = State;
 
     /***/
 },
-/* 5 */
+/* 6 */
+/***/function (module, exports, __webpack_require__) {
+
+    "use strict";
+
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var interfaces_1 = __webpack_require__(1);
+
+    var Section = function (_interfaces_1$Validab3) {
+        _inherits(Section, _interfaces_1$Validab3);
+
+        function Section(id) {
+            _classCallCheck(this, Section);
+
+            var _this3 = _possibleConstructorReturn(this, (Section.__proto__ || Object.getPrototypeOf(Section)).call(this));
+
+            _this3.id = id;
+            return _this3;
+        }
+
+        _createClass(Section, [{
+            key: 'serialize',
+            value: function serialize() {
+                return Object.assign({}, _get(Section.prototype.__proto__ || Object.getPrototypeOf(Section.prototype), 'serialize', this).call(this), { html: this.html });
+            }
+        }, {
+            key: 'deserialize',
+            value: function deserialize(obj) {
+                _get(Section.prototype.__proto__ || Object.getPrototypeOf(Section.prototype), 'deserialize', this).call(this, obj);
+                this.html = obj.html;
+                return this;
+            }
+        }]);
+
+        return Section;
+    }(interfaces_1.ValidableObject);
+
+    exports.Section = Section;
+
+    /***/
+},
+/* 7 */
 /***/function (module, exports, __webpack_require__) {
 
     "use strict";
@@ -325,7 +390,7 @@ exports["udApi"] =
 
     /***/
 },
-/* 6 */
+/* 8 */
 /***/function (module, exports, __webpack_require__) {
 
     "use strict";
@@ -336,166 +401,12 @@ exports["udApi"] =
         }
     }
     Object.defineProperty(exports, "__esModule", { value: true });
-    var form_1 = __webpack_require__(11);
-    exports.Form = form_1.Form;
     __export(__webpack_require__(3));
+    __export(__webpack_require__(4));
     __export(__webpack_require__(10));
-
-    /***/
-},
-/* 7 */
-/***/function (module, exports, __webpack_require__) {
-
-    "use strict";
-
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var user_1 = __webpack_require__(5);
-    exports.User = user_1.User;
-
-    /***/
-},
-/* 8 */
-/***/function (module, exports, __webpack_require__) {
-
-    "use strict";
-
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var lodash_1 = __webpack_require__(0);
-
-    var ValidationError = function () {
-        function ValidationError() {
-            _classCallCheck(this, ValidationError);
-        }
-
-        _createClass(ValidationError, [{
-            key: 'serialize',
-            value: function serialize() {
-                return {
-                    code: this.code,
-                    data: this.data
-                };
-            }
-        }, {
-            key: 'deserialize',
-            value: function deserialize(obj) {
-                this.code = obj.code;
-                this.data = obj.data;
-                return this;
-            }
-        }]);
-
-        return ValidationError;
-    }();
-
-    exports.ValidationError = ValidationError;
-
-    var ValidationList = function () {
-        function ValidationList() {
-            _classCallCheck(this, ValidationList);
-        }
-
-        _createClass(ValidationList, [{
-            key: 'hasError',
-            value: function hasError() {
-                return this.errors.length > 0;
-            }
-        }, {
-            key: 'first',
-            value: function first() {
-                if (this.hasError()) {
-                    return this.errors[0];
-                }
-            }
-        }, {
-            key: 'serialize',
-            value: function serialize() {
-                var res = [];
-                var _iteratorNormalCompletion = true;
-                var _didIteratorError = false;
-                var _iteratorError = undefined;
-
-                try {
-                    for (var _iterator = this.errors[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                        var e = _step.value;
-
-                        res.push(e.serialize());
-                    }
-                } catch (err) {
-                    _didIteratorError = true;
-                    _iteratorError = err;
-                } finally {
-                    try {
-                        if (!_iteratorNormalCompletion && _iterator.return) {
-                            _iterator.return();
-                        }
-                    } finally {
-                        if (_didIteratorError) {
-                            throw _iteratorError;
-                        }
-                    }
-                }
-
-                return res;
-            }
-        }, {
-            key: 'deserialize',
-            value: function deserialize(obj) {
-                var _this = this;
-
-                this.errors = new Array();
-                if (lodash_1.isArray(obj)) {
-                    lodash_1.each(obj, function (e) {
-                        return _this.errors.push(new ValidationError().deserialize(e));
-                    });
-                }
-                return this;
-            }
-        }]);
-
-        return ValidationList;
-    }();
-
-    exports.ValidationList = ValidationList;
-
-    var ValidationMap = function () {
-        function ValidationMap() {
-            _classCallCheck(this, ValidationMap);
-        }
-
-        _createClass(ValidationMap, [{
-            key: 'hasError',
-            value: function hasError() {
-                return this.errors.size > 0;
-            }
-        }, {
-            key: 'serialize',
-            value: function serialize() {
-                var res = {};
-                this.errors.forEach(function (e, id) {
-                    return res['' + id] = e.serialize();
-                });
-                return res;
-            }
-        }, {
-            key: 'deserialize',
-            value: function deserialize(obj) {
-                var _this2 = this;
-
-                this.errors = new Map();
-                if (lodash_1.isObject(obj)) {
-                    lodash_1.each(obj, function (v, k) {
-                        var id = lodash_1.toSafeInteger(k);
-                        _this2.errors.set(id, new ValidationError().deserialize(v));
-                    });
-                }
-                return this;
-            }
-        }]);
-
-        return ValidationMap;
-    }();
-
-    exports.ValidationMap = ValidationMap;
+    // export * from './editable';
+    __export(__webpack_require__(12));
+    __export(__webpack_require__(6));
 
     /***/
 },
@@ -504,7 +415,109 @@ exports["udApi"] =
 
     "use strict";
 
+    function __export(m) {
+        for (var p in m) {
+            if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+        }
+    }
     Object.defineProperty(exports, "__esModule", { value: true });
+    __export(__webpack_require__(7));
+
+    /***/
+},
+/* 10 */
+/***/function (module, exports, __webpack_require__) {
+
+    "use strict";
+
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var lodash_1 = __webpack_require__(0);
+
+    var DisplayableContainer = function () {
+        function DisplayableContainer() {
+            _classCallCheck(this, DisplayableContainer);
+
+            this.display = new Array();
+        }
+
+        _createClass(DisplayableContainer, [{
+            key: 'displayIndex',
+            value: function displayIndex(obj) {
+                return this.display.findIndex(function (id) {
+                    return id == obj.id;
+                });
+            }
+        }, {
+            key: 'displayHas',
+            value: function displayHas(id) {
+                return this.displayIndex({ id: id }) != -1;
+            }
+        }, {
+            key: 'displayCanMoveDown',
+            value: function displayCanMoveDown(obj) {
+                return obj.id != lodash_1.last(this.display);
+            }
+        }, {
+            key: 'displayCanMoveUp',
+            value: function displayCanMoveUp(obj) {
+                return obj.id != lodash_1.head(this.display);
+            }
+        }]);
+
+        return DisplayableContainer;
+    }();
+
+    exports.DisplayableContainer = DisplayableContainer;
+
+    var EdiableDisplayableContainer = function (_DisplayableContainer) {
+        _inherits(EdiableDisplayableContainer, _DisplayableContainer);
+
+        function EdiableDisplayableContainer() {
+            _classCallCheck(this, EdiableDisplayableContainer);
+
+            return _possibleConstructorReturn(this, (EdiableDisplayableContainer.__proto__ || Object.getPrototypeOf(EdiableDisplayableContainer)).apply(this, arguments));
+        }
+
+        _createClass(EdiableDisplayableContainer, [{
+            key: 'displayMoveUp',
+            value: function displayMoveUp(d) {
+                if (this.displayCanMoveUp(d)) {
+                    var idx = this.displayIndex(d);
+                    var tmp = this.display[idx];
+                    this.display[idx] = this.display[idx - 1];
+                    this.display[idx - 1] = tmp;
+                }
+            }
+        }, {
+            key: 'displayMoveDown',
+            value: function displayMoveDown(d) {
+                if (this.displayCanMoveDown(d)) {
+                    var idx = this.displayIndex(d);
+                    var tmp = this.display[idx];
+                    this.display[idx] = this.display[idx + 1];
+                    this.display[idx + 1] = tmp;
+                }
+            }
+        }, {
+            key: 'displayRemove',
+            value: function displayRemove(d) {
+                var idx = this.displayIndex(d);
+                this.display.splice(idx, 1);
+            }
+        }]);
+
+        return EdiableDisplayableContainer;
+    }(DisplayableContainer);
+
+    /***/
+},
+/* 11 */
+/***/function (module, exports, __webpack_require__) {
+
+    "use strict";
+
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var lodash_1 = __webpack_require__(0);
     var field_1 = __webpack_require__(2);
 
     var Boolean = function (_field_1$Field) {
@@ -513,11 +526,7 @@ exports["udApi"] =
         function Boolean() {
             _classCallCheck(this, Boolean);
 
-            var _this3 = _possibleConstructorReturn(this, (Boolean.__proto__ || Object.getPrototypeOf(Boolean)).apply(this, arguments));
-
-            _this3.label = "";
-            _this3.default = false;
-            return _this3;
+            return _possibleConstructorReturn(this, (Boolean.__proto__ || Object.getPrototypeOf(Boolean)).apply(this, arguments));
         }
 
         _createClass(Boolean, [{
@@ -528,14 +537,25 @@ exports["udApi"] =
         }, {
             key: 'serialize',
             value: function serialize() {
-                return Object.assign({}, _get(Boolean.prototype.__proto__ || Object.getPrototypeOf(Boolean.prototype), 'serialize', this).call(this), { label: this.label, default: this.default });
+                var res = _get(Boolean.prototype.__proto__ || Object.getPrototypeOf(Boolean.prototype), 'serialize', this).call(this);
+                if (!lodash_1.isEmpty(this.label)) {
+                    res['label'] = this.label;
+                }
+                if (!lodash_1.isEmpty(this.default)) {
+                    res['default'] = this.default;
+                }
+                return res;
             }
         }, {
             key: 'deserialize',
             value: function deserialize(obj) {
                 _get(Boolean.prototype.__proto__ || Object.getPrototypeOf(Boolean.prototype), 'deserialize', this).call(this, obj);
-                this.label = obj.label;
-                this.default = obj.default;
+                if (!lodash_1.isEmpty(this.label)) {
+                    this.label = obj.label;
+                }
+                if (!lodash_1.isEmpty(this.default)) {
+                    this.default = obj.default;
+                }
                 return this;
             }
         }]);
@@ -547,46 +567,86 @@ exports["udApi"] =
 
     /***/
 },
-/* 10 */
-/***/function (module, exports, __webpack_require__) {
-
-    "use strict";
-
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var field_1 = __webpack_require__(2);
-    exports.Field = field_1.Field;
-    var boolean_1 = __webpack_require__(9);
-    exports.Boolean = boolean_1.Boolean;
-    function create(id, type) {
-        switch (type) {
-            case "boolean":
-                return new Boolean(id);
-            default:
-                return null;
-        }
-    }
-    exports.create = create;
-
-    /***/
-},
-/* 11 */
+/* 12 */
 /***/function (module, exports, __webpack_require__) {
 
     "use strict";
 
     Object.defineProperty(exports, "__esModule", { value: true });
     var lodash_1 = __webpack_require__(0);
-    var user_1 = __webpack_require__(5);
-    var fsm_1 = __webpack_require__(3);
+    var user_1 = __webpack_require__(7);
+    var section_1 = __webpack_require__(6);
+    var field_1 = __webpack_require__(3);
+    var fsm_1 = __webpack_require__(4);
 
     var Form = function () {
         function Form() {
             _classCallCheck(this, Form);
+
+            this.url = "";
+            this.proto = 2;
+            this.version = 0;
+            this.states = false;
+            this.name = "";
+            this.description = "";
+            this.fields = new Map();
+            this.sections = new Map();
+            this.display = new Array();
         }
 
         _createClass(Form, [{
+            key: 'isEmpty',
+            value: function isEmpty() {
+                return this.fields.size == 0;
+            }
+        }, {
+            key: 'isNew',
+            value: function isNew() {
+                return this.version == 0;
+            }
+        }, {
+            key: 'hasField',
+            value: function hasField(id) {
+                return this.fields.has(id);
+            }
+        }, {
+            key: 'getField',
+            value: function getField(id) {
+                return this.fields.get(id);
+            }
+        }, {
+            key: 'getSection',
+            value: function getSection(id) {
+                return this.sections.get(id);
+            }
+        }, {
+            key: 'displayIndex',
+            value: function displayIndex(obj) {
+                return this.display.findIndex(function (id) {
+                    return id == obj.id;
+                });
+            }
+        }, {
+            key: 'displayCanMoveDown',
+            value: function displayCanMoveDown(obj) {
+                return obj.id != lodash_1.last(this.display);
+            }
+        }, {
+            key: 'displayCanMoveUp',
+            value: function displayCanMoveUp(obj) {
+                return obj.id != lodash_1.head(this.display);
+            }
+        }, {
             key: 'serialize',
             value: function serialize() {
+                var fields = {};
+                this.fields.forEach(function (f, id) {
+                    return fields['' + id] = f.serialize();
+                });
+                var sections = {};
+                this.sections.forEach(function (s, id) {
+                    return sections['' + id] = s.serialize();
+                });
                 return {
                     url: this.url,
                     owner: this.owner.serialize(),
@@ -597,12 +657,17 @@ exports["udApi"] =
                     states: this.states,
                     name: this.name,
                     description: this.description,
+                    fields: fields,
+                    sections: sections,
+                    display: this.display,
                     fsm: this.fsm.serialize()
                 };
             }
         }, {
             key: 'deserialize',
             value: function deserialize(obj) {
+                var _this6 = this;
+
                 if (lodash_1.isEmpty(obj)) {
                     return this;
                 }
@@ -622,6 +687,16 @@ exports["udApi"] =
                 this.name = obj.name;
                 this.description = obj.description;
                 this.fields = new Map();
+                lodash_1.each(obj.fields, function (v, k) {
+                    var id = lodash_1.toSafeInteger(k);
+                    _this6.fields.set(id, field_1.extract(id, v));
+                });
+                this.sections = new Map();
+                lodash_1.each(obj.sections, function (v, k) {
+                    var id = lodash_1.toSafeInteger(k);
+                    _this6.sections.set(id, new section_1.Section(id).deserialize(v));
+                });
+                this.display = lodash_1.map(obj.display, lodash_1.toSafeInteger);
                 if (lodash_1.isObject(obj.fsm)) {
                     this.fsm = new fsm_1.FSM().deserialize(obj.fsm);
                 }
@@ -636,14 +711,14 @@ exports["udApi"] =
 
     /***/
 },
-/* 12 */
+/* 13 */
 /***/function (module, exports, __webpack_require__) {
 
     "use strict";
 
     Object.defineProperty(exports, "__esModule", { value: true });
     var lodash_1 = __webpack_require__(0);
-    var state_1 = __webpack_require__(4);
+    var state_1 = __webpack_require__(5);
 
     var FSM = function () {
         function FSM() {
@@ -685,29 +760,29 @@ exports["udApi"] =
         }, {
             key: 'hasField',
             value: function hasField(field) {
-                var _iteratorNormalCompletion2 = true;
-                var _didIteratorError2 = false;
-                var _iteratorError2 = undefined;
+                var _iteratorNormalCompletion = true;
+                var _didIteratorError = false;
+                var _iteratorError = undefined;
 
                 try {
-                    for (var _iterator2 = this.states.values()[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                        var s = _step2.value;
+                    for (var _iterator = this.states.values()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                        var s = _step.value;
 
                         if (s.hasField(field)) {
                             return true;
                         }
                     }
                 } catch (err) {
-                    _didIteratorError2 = true;
-                    _iteratorError2 = err;
+                    _didIteratorError = true;
+                    _iteratorError = err;
                 } finally {
                     try {
-                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                            _iterator2.return();
+                        if (!_iteratorNormalCompletion && _iterator.return) {
+                            _iterator.return();
                         }
                     } finally {
-                        if (_didIteratorError2) {
-                            throw _iteratorError2;
+                        if (_didIteratorError) {
+                            throw _iteratorError;
                         }
                     }
                 }
@@ -732,29 +807,29 @@ exports["udApi"] =
             key: 'statesFor',
             value: function statesFor(field) {
                 var res = new Array();
-                var _iteratorNormalCompletion3 = true;
-                var _didIteratorError3 = false;
-                var _iteratorError3 = undefined;
+                var _iteratorNormalCompletion2 = true;
+                var _didIteratorError2 = false;
+                var _iteratorError2 = undefined;
 
                 try {
-                    for (var _iterator3 = this.states.values()[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                        var s = _step3.value;
+                    for (var _iterator2 = this.states.values()[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                        var s = _step2.value;
 
                         if (s.hasField(field)) {
                             res.push(s);
                         }
                     }
                 } catch (err) {
-                    _didIteratorError3 = true;
-                    _iteratorError3 = err;
+                    _didIteratorError2 = true;
+                    _iteratorError2 = err;
                 } finally {
                     try {
-                        if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                            _iterator3.return();
+                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                            _iterator2.return();
                         }
                     } finally {
-                        if (_didIteratorError3) {
-                            throw _iteratorError3;
+                        if (_didIteratorError2) {
+                            throw _iteratorError2;
                         }
                     }
                 }
@@ -776,13 +851,13 @@ exports["udApi"] =
         }, {
             key: 'deserialize',
             value: function deserialize(obj) {
-                var _this4 = this;
+                var _this7 = this;
 
                 this.states = new Map();
                 if (lodash_1.isObject(obj.states)) {
                     lodash_1.each(obj.states, function (v, k) {
                         var id = lodash_1.toSafeInteger(k);
-                        _this4.states.set(id, new state_1.State(id).deserialize(v));
+                        _this7.states.set(id, new state_1.State(id).deserialize(v));
                     });
                     this.initial = this.states.get(lodash_1.toSafeInteger(obj.initial));
                 }
@@ -797,7 +872,7 @@ exports["udApi"] =
 
     /***/
 },
-/* 13 */
+/* 14 */
 /***/function (module, exports, __webpack_require__) {
 
     "use strict";
@@ -808,9 +883,222 @@ exports["udApi"] =
         }
     }
     Object.defineProperty(exports, "__esModule", { value: true });
+    __export(__webpack_require__(8));
     __export(__webpack_require__(1));
-    __export(__webpack_require__(6));
-    __export(__webpack_require__(7));
+    __export(__webpack_require__(9));
+
+    /***/
+},
+/* 15 */
+/***/function (module, exports, __webpack_require__) {
+
+    "use strict";
+
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var lodash_1 = __webpack_require__(0);
+
+    var ValidationError = function () {
+        function ValidationError() {
+            _classCallCheck(this, ValidationError);
+        }
+
+        _createClass(ValidationError, [{
+            key: 'serialize',
+            value: function serialize() {
+                return {
+                    code: this.code,
+                    data: this.data
+                };
+            }
+        }, {
+            key: 'deserialize',
+            value: function deserialize(obj) {
+                this.code = obj.code;
+                this.data = obj.data;
+                return this;
+            }
+        }]);
+
+        return ValidationError;
+    }();
+
+    exports.ValidationError = ValidationError;
+
+    var ValidationList = function () {
+        function ValidationList() {
+            _classCallCheck(this, ValidationList);
+
+            this.errors = new Array();
+        }
+
+        _createClass(ValidationList, [{
+            key: 'hasErrors',
+            value: function hasErrors() {
+                return this.errors.length > 0;
+            }
+        }, {
+            key: 'setErrors',
+            value: function setErrors(obj) {
+                this._extract(obj);
+            }
+        }, {
+            key: 'first',
+            value: function first() {
+                if (this.hasErrors()) {
+                    return this.errors[0];
+                }
+            }
+        }, {
+            key: 'serialize',
+            value: function serialize() {
+                var res = [];
+                var _iteratorNormalCompletion3 = true;
+                var _didIteratorError3 = false;
+                var _iteratorError3 = undefined;
+
+                try {
+                    for (var _iterator3 = this.errors[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                        var e = _step3.value;
+
+                        res.push(e.serialize());
+                    }
+                } catch (err) {
+                    _didIteratorError3 = true;
+                    _iteratorError3 = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                            _iterator3.return();
+                        }
+                    } finally {
+                        if (_didIteratorError3) {
+                            throw _iteratorError3;
+                        }
+                    }
+                }
+
+                return res;
+            }
+        }, {
+            key: 'deserialize',
+            value: function deserialize(obj) {
+                return this._extract(obj);
+            }
+        }, {
+            key: '_extract',
+            value: function _extract(obj) {
+                var _this8 = this;
+
+                this.errors = new Array();
+                if (lodash_1.isArray(obj)) {
+                    lodash_1.each(obj, function (e) {
+                        return _this8.errors.push(new ValidationError().deserialize(e));
+                    });
+                }
+                return this;
+            }
+        }]);
+
+        return ValidationList;
+    }();
+
+    exports.ValidationList = ValidationList;
+
+    var ValidableObject = function () {
+        function ValidableObject() {
+            _classCallCheck(this, ValidableObject);
+
+            this.errors = new Map();
+        }
+
+        _createClass(ValidableObject, [{
+            key: 'hasErrors',
+            value: function hasErrors() {
+                return this.errors.size > 0;
+            }
+        }, {
+            key: 'setErrors',
+            value: function setErrors(obj) {
+                this._extract(obj);
+            }
+        }, {
+            key: 'serialize',
+            value: function serialize() {
+                var res = {};
+                this.errors.forEach(function (e, id) {
+                    return res['' + id] = e.serialize();
+                });
+                if (lodash_1.isEmpty(res)) {
+                    return {};
+                }
+                return { errors: res };
+            }
+        }, {
+            key: 'deserialize',
+            value: function deserialize(obj) {
+                return this._extract(obj);
+            }
+        }, {
+            key: '_extract',
+            value: function _extract(obj) {
+                var _this9 = this;
+
+                this.errors = new Map();
+                if (lodash_1.isObject(obj.errors)) {
+                    lodash_1.each(obj.errors, function (v, k) {
+                        var id = lodash_1.toSafeInteger(k);
+                        _this9.errors.set(k, new ValidationList().deserialize(v));
+                    });
+                }
+                return this;
+            }
+        }]);
+
+        return ValidableObject;
+    }();
+
+    exports.ValidableObject = ValidableObject;
+    //
+    // export class ValidationList implements ValidationContainer, Serializable{
+    //   errors: Array<ValidationError>;
+    //
+    //   hasErrors(): boolean {
+    //     return this.errors.length > 0;
+    //   }
+    //
+    //   setErrors(errs: any) {
+    //     this.errors = new Array<ValidationError>();
+    //     if (isArray(obj)) {
+    //       each(obj, (e) =>
+    //         this.errors.push(new ValidationError().deserialize(e)));
+    //     }
+    //   }
+    //
+    //   // first(): ValidationError {
+    //   //   if (this.hasErrors()) {
+    //   //     return this.errors[0];
+    //   //   }
+    //   // }
+    //
+    //   serialize(): any {
+    //     let res = [];
+    //     for (let e of this.errors) {
+    //       res.push(e.serialize());
+    //     }
+    //     return res;
+    //   }
+    //
+    //
+    //   deserialize(obj: any): ValidationList {
+    //     this.errors = new Array<ValidationError>();
+    //     if (isArray(obj)) {
+    //       each(obj, (e) =>
+    //         this.errors.push(new ValidationError().deserialize(e)));
+    //     }
+    //     return this;
+    //   }
+    // }
+
 
     /***/
 }]);

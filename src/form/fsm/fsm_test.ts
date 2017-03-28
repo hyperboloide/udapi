@@ -16,6 +16,7 @@ const example = {
       nexts: [],
     }
   },
+  errors: { initial: [{code: "some.error.code", data: {id: 42}}] }
 }
 
 describe('fsm', () => {
