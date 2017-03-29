@@ -67,7 +67,6 @@ export class ValidationList implements ValidationContainer {
 
 }
 
-
 export class ValidableObject implements ValidationContainer, Serializable {
   errors: Map<string, ValidationList> = new Map();
 
@@ -93,7 +92,10 @@ export class ValidableObject implements ValidationContainer, Serializable {
   }
 
   deserialize(obj: any): ValidableObject {
-    return this._extract(obj.errors);
+    if (!isEmpty(obj)) {
+        this._extract(obj.errors);
+    }
+    return this;
   }
 
   private _extract(obj: any): ValidableObject {
@@ -110,45 +112,3 @@ export class ValidableObject implements ValidationContainer, Serializable {
     return this;
   }
 }
-
-
-//
-// export class ValidationList implements ValidationContainer, Serializable{
-//   errors: Array<ValidationError>;
-//
-//   hasErrors(): boolean {
-//     return this.errors.length > 0;
-//   }
-//
-//   setErrors(errs: any) {
-//     this.errors = new Array<ValidationError>();
-//     if (isArray(obj)) {
-//       each(obj, (e) =>
-//         this.errors.push(new ValidationError().deserialize(e)));
-//     }
-//   }
-//
-//   // first(): ValidationError {
-//   //   if (this.hasErrors()) {
-//   //     return this.errors[0];
-//   //   }
-//   // }
-//
-//   serialize(): any {
-//     let res = [];
-//     for (let e of this.errors) {
-//       res.push(e.serialize());
-//     }
-//     return res;
-//   }
-//
-//
-//   deserialize(obj: any): ValidationList {
-//     this.errors = new Array<ValidationError>();
-//     if (isArray(obj)) {
-//       each(obj, (e) =>
-//         this.errors.push(new ValidationError().deserialize(e)));
-//     }
-//     return this;
-//   }
-// }

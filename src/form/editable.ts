@@ -2,7 +2,8 @@
 //
 // import { Field, create } from './field';
 // import { Section } from './section';
-// import { Form, Displayable } from './form';
+// import { Form } from './form';
+// import { Displayable } from './display;'
 //
 // export class EditableForm extends Form {
 //
@@ -12,7 +13,7 @@
 //     return this._nextid += 1;
 //   }
 //
-//   addField(type, name: string = ''): Field {
+//   createField(type, name: string = ''): Field {
 //     let f = create(this.nextid(), type);
 //     f.name = name;
 //     this.fields.set(f.id, f);

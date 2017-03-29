@@ -1,11 +1,13 @@
-import { isEmpty, isObject, each, toSafeInteger, map, last, head } from 'lodash';
+import { isEmpty, isObject, each, toSafeInteger } from 'lodash';
 
 import { ValidableObject } from '../interfaces';
 import { User } from '../user/user';
 import { Section } from './section';
-import { Field, extract } from './field';
+import { Field, extract, create, Embedded } from './field';
 import { FSM } from './fsm';
-import { Displayable } from './displayable';
+import { Displayable, Display } from './display';
+
+
 
 
 export class Form extends ValidableObject {
@@ -21,39 +23,110 @@ export class Form extends ValidableObject {
 
   fields: Map<number, Field> = new Map();
   sections: Map<number, Section> = new Map();
-  display: Array<number> = new Array();
+  display: Display = new Display();
   fsm: FSM;
 
-  isEmpty(): boolean {
-    return this.fields.size == 0;
+  private _nextid: number = 0;
+
+  nextid(): number {
+    return this._nextid += 1;
   }
 
   isNew(): boolean {
     return this.version == 0;
   }
 
+  isEmpty(): boolean {
+    return this.fields.size == 0;
+  }
+
   hasField(id: number): boolean {
     return this.fields.has(id);
+  }
+
+  private createField(type, name: string = ''): Field {
+    let f = create(this.nextid(), type);
+    return f;
+  }
+
+  addField(type, name: string = ''): Field {
+    let f = this.createField(type, name);
+    this.fields.set(f.id, f);
+    this.display.add(f);
+
+    this.fsm.addField(f);
+    return f;
+  }
+
+  addEmbeddedField(emb: Embedded, type, name: string = ''): Field {
+    if (!this.hasField(emb.id)) {
+      return;
+    }
+    let f = this.createField(type, name);
+    emb.fields.set(f.id, f);
+    emb.display.add(f);
+
+    this.fsm.addField(f);
+    return f;
+
   }
 
   getField(id: number): Field {
     return this.fields.get(id);
   }
 
+  getEmbeddedField(id: number): [Embedded, Field] {
+    for (let emb of this.getEmbeddeds()) {
+      if (emb.hasField(id)) {
+        return [emb, emb.getField(id)];
+      }
+    }
+    return [null, null];
+  }
+
+  getEmbeddeds(): Array<Embedded> {
+    let res = new Array<Embedded>();
+    this.fields.forEach((f, id) => {
+      if (f.type() == "embedded" && (<Embedded>f)) {
+        res.push((<Embedded>f));
+      }
+    });
+    return res;
+  }
+
+  removeField(f: Field) {
+    if (this.hasField(f.id)) {
+      if (f.type() == "embedded") {
+        let emb = (<Embedded>f);
+         emb.fields.forEach((f) => this.removeField(f));
+      }
+      this.fields.delete(f.id);
+      this.display.remove(f);
+    } else {
+      let [emb, res] = this.getEmbeddedField(f.id);
+      if (!isEmpty(f)) {
+        emb.fields.delete(res.id);
+        emb.display.remove(res);
+      }
+    }
+    this.fsm.removeField(f);
+  }
+
   getSection(id: number): Section {
     return this.sections.get(id);
   }
 
-  displayIndex(obj: Displayable): number {
-    return this.display.findIndex((id) => id == obj.id);
+
+  newSection(): Section {
+    let s = new Section(this.nextid());
+    this.sections.set(s.id, s);
+    this.display.add(s);
+    return s;
   }
 
-  displayCanMoveDown(obj: Displayable): boolean {
-    return obj.id != last(this.display);
-  }
-
-  displayCanMoveUp(obj: Displayable): boolean {
-     return obj.id != head(this.display);
+  removeSection(s :Section) {
+    this.sections.delete(s.id);
+    this.display.remove(s);
   }
 
   serialize(): any {
@@ -76,8 +149,9 @@ export class Form extends ValidableObject {
       description: this.description,
       fields: fields,
       sections: sections,
-      display: this.display,
+      display: this.display.serialize(),
       fsm: this.fsm.serialize(),
+      nextid: this._nextid,
     }
   }
 
@@ -116,11 +190,13 @@ export class Form extends ValidableObject {
       this.sections.set(id, new Section(id).deserialize(v));
     })
 
-    this.display = map(obj.display, toSafeInteger);
+    this.display = new Display().deserialize(obj.display);
 
     if (isObject(obj.fsm)) {
       this.fsm = new FSM().deserialize(obj.fsm);
     }
+
+    this._nextid = toSafeInteger(obj.nextid);
 
     return this;
   }

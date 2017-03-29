@@ -1,7 +1,7 @@
 import { isObject, } from 'lodash';
 
 import { ValidableObject } from '../interfaces';
-import { Displayable } from './displayable';
+import { Displayable } from './display';
 
 export class Section extends ValidableObject implements Displayable {
   readonly id: number;
