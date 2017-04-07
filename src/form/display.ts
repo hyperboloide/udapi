@@ -3,8 +3,9 @@ import { isEmpty, isObject, each, toSafeInteger, map, last, head } from 'lodash'
 import { Serializable } from '../interfaces';
 import { Field } from './field';
 
+
 export interface Displayable {
-  id: number;
+  readonly id: number;
 }
 
 export class Display implements Serializable {

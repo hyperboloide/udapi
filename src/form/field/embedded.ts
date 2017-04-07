@@ -4,6 +4,7 @@ import { Field, extract } from '.';
 import { Display } from '../display';
 import { ValidableObject } from '../../interfaces';
 
+
 export class EmbeddedOptions extends ValidableObject {
   max: number = 99;
   min: number = 1;
