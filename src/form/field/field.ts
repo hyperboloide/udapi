@@ -1,7 +1,8 @@
-import { isEmpty, isArray } from 'lodash';
+import { isEmpty, isArray, isBoolean } from 'lodash';
 
-import { Displayable } from '../displayable';
+import { Displayable } from '../display';
 import { ValidableObject } from '../../interfaces';
+
 
 export abstract class Field extends ValidableObject implements Displayable {
   readonly id: number;
@@ -36,7 +37,10 @@ export abstract class Field extends ValidableObject implements Displayable {
     }
     this.name = obj.name;
     this.help = obj.help;
-    this.mandatory = obj.mandatory;
+    if (isBoolean(obj.mandatory)) {
+      this.mandatory = obj.mandatory;
+    }
+
     return this;
   }
 }

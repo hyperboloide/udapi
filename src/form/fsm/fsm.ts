@@ -1,4 +1,4 @@
-import { each, toSafeInteger, isObject, map } from 'lodash';
+import { each, toSafeInteger, isObject, has } from 'lodash';
 
 import { ValidableObject } from '../../interfaces';
 import { State } from './state';
@@ -59,6 +59,28 @@ export class FSM extends ValidableObject {
       }
     }
     return res;
+  }
+
+  hasChildErrors(): boolean {
+    for (let child of this.states.values()) {
+      if (child.hasErrors()) {
+          return true;
+        }
+    }
+    return false;
+  }
+
+  setErrors(obj: any) {
+    super.setErrors(obj);
+    if (has(obj, 'states.items')) {
+      let items = obj.states.items;
+      each(items, (v, k) => {
+        let id = toSafeInteger(k)
+        if (this.has(id)) {
+          this.get(id).setErrors(v);
+        }
+      });
+    }
   }
 
   serialize(): any {

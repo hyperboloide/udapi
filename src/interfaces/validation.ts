@@ -67,12 +67,15 @@ export class ValidationList implements ValidationContainer {
 
 }
 
-
 export class ValidableObject implements ValidationContainer, Serializable {
   errors: Map<string, ValidationList> = new Map();
 
   hasErrors(): boolean {
     return this.errors.size > 0;
+  }
+
+  hasChildErrors(): boolean {
+    return false;
   }
 
   setErrors(obj: any) {
@@ -89,59 +92,23 @@ export class ValidableObject implements ValidationContainer, Serializable {
   }
 
   deserialize(obj: any): ValidableObject {
-    return this._extract(obj);
+    if (!isEmpty(obj)) {
+        this._extract(obj.errors);
+    }
+    return this;
   }
 
   private _extract(obj: any): ValidableObject {
     this.errors = new Map();
-    if (isObject(obj.errors)) {
-      each(obj.errors, (v, k) => {
+    if (isObject(obj)) {
+      each(obj, (v, k) => {
         let id = toSafeInteger(k);
-        this.errors.set(k, new ValidationList().deserialize(v));
+        let l = new ValidationList().deserialize(v);
+        if (l.hasErrors()) {
+            this.errors.set(k, l);
+        }
       });
     }
     return this;
   }
 }
-
-
-//
-// export class ValidationList implements ValidationContainer, Serializable{
-//   errors: Array<ValidationError>;
-//
-//   hasErrors(): boolean {
-//     return this.errors.length > 0;
-//   }
-//
-//   setErrors(errs: any) {
-//     this.errors = new Array<ValidationError>();
-//     if (isArray(obj)) {
-//       each(obj, (e) =>
-//         this.errors.push(new ValidationError().deserialize(e)));
-//     }
-//   }
-//
-//   // first(): ValidationError {
-//   //   if (this.hasErrors()) {
-//   //     return this.errors[0];
-//   //   }
-//   // }
-//
-//   serialize(): any {
-//     let res = [];
-//     for (let e of this.errors) {
-//       res.push(e.serialize());
-//     }
-//     return res;
-//   }
-//
-//
-//   deserialize(obj: any): ValidationList {
-//     this.errors = new Array<ValidationError>();
-//     if (isArray(obj)) {
-//       each(obj, (e) =>
-//         this.errors.push(new ValidationError().deserialize(e)));
-//     }
-//     return this;
-//   }
-// }
