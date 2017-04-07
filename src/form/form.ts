@@ -7,9 +7,6 @@ import { Field, extract, create, Embedded } from './field';
 import { FSM } from './fsm';
 import { Displayable, Display } from './display';
 
-
-
-
 export class Form extends ValidableObject {
   url: string = "";
   owner: User;
@@ -117,7 +114,7 @@ export class Form extends ValidableObject {
   }
 
 
-  newSection(): Section {
+  addSection(): Section {
     let s = new Section(this.nextid());
     this.sections.set(s.id, s);
     this.display.add(s);
