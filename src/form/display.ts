@@ -26,11 +26,11 @@ export class Display implements Serializable {
   }
 
   canMoveDown(obj: Displayable): boolean {
-    return obj.id != last(this.items);
+    return this.has(obj) && obj.id != last(this.items);
   }
 
   canMoveUp(obj: Displayable): boolean {
-     return obj.id != head(this.items);
+     return this.has(obj) && obj.id != head(this.items);
   }
 
   moveUp(d: Displayable) {
