@@ -64,7 +64,7 @@ exports["udApi"] =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 15);
+/******/ 	return __webpack_require__(__webpack_require__.s = 17);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -84,11 +84,51 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 ;
-__export(__webpack_require__(16));
+__export(__webpack_require__(18));
 
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const lodash_1 = __webpack_require__(0);
+const interfaces_1 = __webpack_require__(1);
+class Field extends interfaces_1.ValidableObject {
+    constructor(id) {
+        super();
+        this.name = "";
+        this.help = "";
+        this.mandatory = false;
+        this.id = id;
+    }
+    serialize() {
+        let res = Object.assign({}, super.serialize(), { name: this.name, type: this.type(), mandatory: this.mandatory });
+        if (!lodash_1.isEmpty(this.help)) {
+            res['help'] = this.help;
+        }
+        return res;
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        if (lodash_1.isEmpty(obj)) {
+            return this;
+        }
+        this.name = obj.name;
+        this.help = obj.help;
+        if (lodash_1.isBoolean(obj.mandatory)) {
+            this.mandatory = obj.mandatory;
+        }
+        return this;
+    }
+}
+exports.Field = Field;
+
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -149,19 +189,23 @@ exports.Display = Display;
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const lodash_1 = __webpack_require__(0);
-const field_1 = __webpack_require__(4);
+const field_1 = __webpack_require__(2);
 exports.Field = field_1.Field;
 const boolean_1 = __webpack_require__(11);
 exports.Boolean = boolean_1.Boolean;
-const embedded_1 = __webpack_require__(12);
+const date_1 = __webpack_require__(12);
+exports.DateField = date_1.DateField;
+const embedded_1 = __webpack_require__(13);
 exports.Embedded = embedded_1.Embedded;
+const file_1 = __webpack_require__(14);
+exports.File = file_1.File;
 function create(id, type) {
     switch (type) {
         case "boolean":
@@ -187,46 +231,6 @@ exports.extract = extract;
 
 
 /***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const lodash_1 = __webpack_require__(0);
-const interfaces_1 = __webpack_require__(1);
-class Field extends interfaces_1.ValidableObject {
-    constructor(id) {
-        super();
-        this.name = "";
-        this.help = "";
-        this.mandatory = false;
-        this.id = id;
-    }
-    serialize() {
-        let res = Object.assign({}, super.serialize(), { name: this.name, type: this.type(), mandatory: this.mandatory });
-        if (!lodash_1.isEmpty(this.help)) {
-            res['help'] = this.help;
-        }
-        return res;
-    }
-    deserialize(obj) {
-        super.deserialize(obj);
-        if (lodash_1.isEmpty(obj)) {
-            return this;
-        }
-        this.name = obj.name;
-        this.help = obj.help;
-        if (lodash_1.isBoolean(obj.mandatory)) {
-            this.mandatory = obj.mandatory;
-        }
-        return this;
-    }
-}
-exports.Field = Field;
-
-
-/***/ }),
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -236,7 +240,7 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(14));
+__export(__webpack_require__(16));
 __export(__webpack_require__(6));
 
 
@@ -358,10 +362,10 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(3));
+__export(__webpack_require__(4));
 __export(__webpack_require__(5));
-__export(__webpack_require__(2));
-__export(__webpack_require__(13));
+__export(__webpack_require__(3));
+__export(__webpack_require__(15));
 __export(__webpack_require__(7));
 
 
@@ -386,7 +390,7 @@ __export(__webpack_require__(8));
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const lodash_1 = __webpack_require__(0);
-const field_1 = __webpack_require__(4);
+const field_1 = __webpack_require__(2);
 class Boolean extends field_1.Field {
     type() {
         return "boolean";
@@ -396,17 +400,17 @@ class Boolean extends field_1.Field {
         if (!lodash_1.isEmpty(this.label)) {
             res['label'] = this.label;
         }
-        if (!lodash_1.isEmpty(this.default)) {
+        if (lodash_1.isBoolean(this.default)) {
             res['default'] = this.default;
         }
         return res;
     }
     deserialize(obj) {
         super.deserialize(obj);
-        if (!lodash_1.isEmpty(this.label)) {
+        if (!lodash_1.isEmpty(obj.label) && lodash_1.isString(obj.label)) {
             this.label = obj.label;
         }
-        if (!lodash_1.isEmpty(this.default)) {
+        if (lodash_1.isBoolean(obj.default)) {
             this.default = obj.default;
         }
         return this;
@@ -423,8 +427,39 @@ exports.Boolean = Boolean;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const lodash_1 = __webpack_require__(0);
-const _1 = __webpack_require__(3);
-const display_1 = __webpack_require__(2);
+const field_1 = __webpack_require__(2);
+class DateField extends field_1.Field {
+    type() {
+        return "date";
+    }
+    serialize() {
+        let res = super.serialize();
+        if (!lodash_1.isEmpty(this.default)) {
+            res['default'] = this.default.toJSON();
+        }
+        return res;
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        if (!lodash_1.isEmpty(obj.default)) {
+            this.default = new Date(obj.default);
+        }
+        return this;
+    }
+}
+exports.DateField = DateField;
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const lodash_1 = __webpack_require__(0);
+const _1 = __webpack_require__(4);
+const display_1 = __webpack_require__(3);
 const interfaces_1 = __webpack_require__(1);
 class EmbeddedOptions extends interfaces_1.ValidableObject {
     constructor() {
@@ -506,7 +541,23 @@ exports.Embedded = Embedded;
 
 
 /***/ }),
-/* 13 */
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const field_1 = __webpack_require__(2);
+class File extends field_1.Field {
+    type() {
+        return "file";
+    }
+}
+exports.File = File;
+
+
+/***/ }),
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -516,9 +567,9 @@ const lodash_1 = __webpack_require__(0);
 const interfaces_1 = __webpack_require__(1);
 const user_1 = __webpack_require__(8);
 const section_1 = __webpack_require__(7);
-const field_1 = __webpack_require__(3);
+const field_1 = __webpack_require__(4);
 const fsm_1 = __webpack_require__(5);
-const display_1 = __webpack_require__(2);
+const display_1 = __webpack_require__(3);
 class Form extends interfaces_1.ValidableObject {
     constructor() {
         super(...arguments);
@@ -545,9 +596,25 @@ class Form extends interfaces_1.ValidableObject {
     hasField(id) {
         return this.fields.has(id);
     }
+    hasEmbeddedField(id) {
+        for (let emb of this.getEmbeddeds()) {
+            if (emb.hasField(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
     hasFieldsOfType(t) {
         for (let [id, field] of this.fields) {
             if (field.type() == t) {
+                return true;
+            }
+        }
+        return false;
+    }
+    hasEmbeddedFieldsOfType(t) {
+        for (let emb of this.getEmbeddeds()) {
+            if (emb.hasFieldsOfType(t)) {
                 return true;
             }
         }
@@ -683,7 +750,7 @@ exports.Form = Form;
 
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -778,7 +845,7 @@ exports.FSM = FSM;
 
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -793,7 +860,7 @@ __export(__webpack_require__(10));
 
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

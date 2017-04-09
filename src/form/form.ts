@@ -42,9 +42,27 @@ export class Form extends ValidableObject implements FieldContainer {
     return this.fields.has(id);
   }
 
+  hasEmbeddedField(id: number): boolean {
+    for (let emb of this.getEmbeddeds()) {
+      if (emb.hasField(id)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   hasFieldsOfType(t: string): boolean {
     for (let [id, field] of this.fields) {
       if (field.type() == t) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  hasEmbeddedFieldsOfType(t: string): boolean {
+    for (let emb of this.getEmbeddeds()) {
+      if (emb.hasFieldsOfType(t)) {
         return true;
       }
     }

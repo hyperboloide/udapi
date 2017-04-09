@@ -30,4 +30,4 @@ minor:
 major:
 	npm version major
 
-.PHONY: all webpack babel uglifyjs clean doc
+.PHONY: all webpack clean doc patch minor major

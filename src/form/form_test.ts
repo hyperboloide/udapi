@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { isEqual, isEmpty } from 'lodash';
 
 import { Form } from "./form";
-import { Embedded } from "./field";
+import { Embedded, Boolean } from "./field";
 
 export const ExampleForm = {
   url: "test-form",
@@ -24,6 +24,8 @@ export const ExampleForm = {
       help: "help",
       mandatory: true,
       type: "boolean",
+      label: "lalalala",
+      default: true,
     },
     "4": {
       name: "embedded field",
@@ -94,13 +96,6 @@ describe('form', () => {
 
   describe('fields', () => {
 
-    it('should hasField', () => {
-      let f = new Form().deserialize(ExampleForm);
-      expect(f.hasField(3)).to.equal(true);
-      expect(f.hasField(4)).to.equal(true);
-      expect(f.hasField(5)).to.equal(false);
-    })
-
     it('should addField', () => {
       let f = new Form().deserialize(ExampleForm);
       let field  = f.addField('boolean', 'created field');
@@ -144,16 +139,75 @@ describe('form', () => {
       expect(isEqual(embeddeds, [(<Embedded>f.getField(4))])).to.equal(true);
     })
 
-    it('should removeField', () => {
-      let f = new Form().deserialize(ExampleForm);
-      let normalField = f.getField(3);
-      f.removeField(normalField);
-      expect(f.hasField(normalField.id)).to.equal(false);
+    describe('has', () => {
+      it('should hasField', () => {
+        let f = new Form().deserialize(ExampleForm);
+        expect(f.hasField(3)).to.equal(true);
+        expect(f.hasField(4)).to.equal(true);
+        expect(f.hasField(5)).to.equal(false);
+      })
 
-      f.deserialize(ExampleForm);
-      let [embd, embeddedChildField] = f.getEmbeddedField(5);
-      f.removeField(embeddedChildField);
-      expect(f.hasField(3)).to.equal(true);
+      it('should hasEmbeddedField', () => {
+        let f = new Form().deserialize(ExampleForm);
+        expect(f.hasEmbeddedField(5)).to.equal(true);
+        expect(f.hasEmbeddedField(4)).to.equal(false);
+        expect(f.hasEmbeddedField(3)).to.equal(false);
+      })
+
+      it('should hasFieldOfType', () => {
+        let f = new Form().deserialize(ExampleForm);
+        expect(f.hasFieldsOfType("embedded")).to.equal(true);
+        expect(f.hasFieldsOfType("boolean")).to.equal(true);
+
+        f.removeField(f.getField(3));
+        expect(f.hasFieldsOfType("boolean")).to.equal(false);
+      })
+
+      it('should hasEmbeddedFieldsOfType', () => {
+        let f = new Form().deserialize(ExampleForm);
+        expect(f.hasEmbeddedFieldsOfType("embedded")).to.equal(false);
+        expect(f.hasEmbeddedFieldsOfType("boolean")).to.equal(true);
+      })
+
+    })
+
+    describe('removeField', () => {
+
+      it('should remove simple', () => {
+        let f = new Form().deserialize(ExampleForm);
+        let normalField = f.getField(3);
+        f.removeField(normalField);
+        expect(f.hasField(normalField.id)).to.equal(false);
+        expect(f.fsm.hasField(normalField)).to.equal(false);
+        expect(f.display.has(normalField)).to.equal(false);
+      })
+
+      it('should remove embedded child', () => {
+        let f = new Form().deserialize(ExampleForm);
+        let [embd, field] = f.getEmbeddedField(5);
+        expect(isEmpty(embd)).to.equal(false);
+        expect(isEmpty(field)).to.equal(false);
+
+        f.removeField(field);
+        expect(f.hasEmbeddedField(field.id)).to.equal(false);
+        expect(f.fsm.hasField(field)).to.equal(false);
+        expect(embd.display.has(field)).to.equal(false);
+      })
+
+      it('should remove embedded', () => {
+        let f = new Form().deserialize(ExampleForm);
+        let [embd, field] = f.getEmbeddedField(5);
+
+
+        f.removeField(embd);
+        expect(f.hasField(embd.id)).to.equal(false);
+        expect(f.fsm.hasField(embd)).to.equal(false);
+        expect(f.display.has(embd)).to.equal(false);
+
+        expect(f.hasEmbeddedField(field.id)).to.equal(false);
+        expect(f.fsm.hasField(field)).to.equal(false);
+      })
+
     })
 
   })

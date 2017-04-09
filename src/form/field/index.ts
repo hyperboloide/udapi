@@ -2,13 +2,17 @@ import { isString, isEmpty } from 'lodash';
 
 import  { Field } from "./field";
 import  { Boolean } from "./boolean";
+import  { DateField } from "./date";
 import  { Embedded } from "./embedded";
+import  { File } from "./file";
 
 
 export {
   Field,
   Boolean,
+  DateField,
   Embedded,
+  File,
 }
 
 export interface FieldContainer {
@@ -25,8 +29,12 @@ export function create(id: number, type: string): Field {
   switch(type) {
     case "boolean":
       return new Boolean(id);
+    case "date":
+      return new DateField(id);
     case "embedded":
       return new Embedded(id);
+    case "File":
+      return new File(id);
     default:
       return null;
   }
