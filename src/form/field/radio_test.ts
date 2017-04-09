@@ -1,0 +1,95 @@
+import { expect } from 'chai';
+import { isEqual, isEmpty, isNil } from 'lodash';
+
+import { Field } from './field';
+import { Radio } from './radio';
+import { ChoiceValue } from './choice';
+
+export const exampleRadio = {
+  name: "example",
+  help: "help",
+  mandatory: true,
+  type: "radio",
+  values: [
+    {id: 1, label:"value 1"},
+    {id: 2, label:"value 2"},
+    {id: 3, label:"value 3"},
+    {id: 4, label:"value 4"},
+  ],
+  default: 2,
+}
+
+describe('field radio', () => {
+
+  it('should deserialize', () => {
+    let f = new Radio(42).deserialize(exampleRadio);
+    expect(f.type()).to.equal("radio");
+    expect(f.default).to.equal(2);
+  });
+
+  it('should serialize', () => {
+    let f = new Radio(42).deserialize(exampleRadio);
+    let obj = f.serialize();
+    expect(isEqual(obj, exampleRadio)).to.equal(true);
+  });
+
+  it('should removeValue', () => {
+    let f = new Radio(42).deserialize(exampleRadio);
+    let v = f.getValue(2);
+    expect(f.isDefault(v)).to.equal(true);
+
+    f.removeValue(v);
+    expect(f.isDefault(v)).to.equal(false);
+    expect(isNil(f.default)).to.equal(true);
+  });
+
+  it('should isDefault', () => {
+    let f = new Radio(42).deserialize(exampleRadio);
+
+    expect(f.isDefault(f.getValue(2))).to.equal(true);
+    expect(f.isDefault(f.getValue(3))).to.equal(false);
+  });
+
+  it('should setDefault', () => {
+    let f = new Radio(42).deserialize(exampleRadio);
+    let v = f.getValue(2);
+    expect(f.isDefault(v)).to.equal(true);
+
+    f.setDefault(null)
+    expect(f.isDefault(v)).to.equal(false);
+    f.setDefault(v)
+    expect(f.isDefault(v)).to.equal(true);
+  });
+
+
+
+  // it('should removeValue', () => {
+  //   let f = new Multiple(42).deserialize(exampleMultiple);
+  //   let v = f.getValue(2);
+  //   expect(f.isDefault(v)).to.equal(true);
+  //
+  //   f.removeValue(v);
+  //   expect(f.isDefault(v)).to.equal(false);
+  //   expect(isEmpty(f.getValue(2))).to.equal(true);
+  // });
+  //
+  // it('should isDefault', () => {
+  //   let f = new Multiple(42).deserialize(exampleMultiple);
+  //
+  //   expect(f.isDefault(f.getValue(1))).to.equal(false);
+  //   expect(f.isDefault(f.getValue(2))).to.equal(true);
+  // });
+  //
+  // it('should toggleDefault', () => {
+  //   let f = new Multiple(42).deserialize(exampleMultiple);
+  //   let v = f.getValue(1);
+  //
+  //   expect(f.isDefault(v)).to.equal(false);
+  //   f.toggleDefault(v);
+  //   expect(f.isDefault(v)).to.equal(true);
+  //   f.toggleDefault(v);
+  //   expect(f.isDefault(v)).to.equal(false);
+  // });
+
+
+});

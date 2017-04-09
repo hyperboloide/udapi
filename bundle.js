@@ -64,7 +64,7 @@ exports["udApi"] =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 17);
+/******/ 	return __webpack_require__(__webpack_require__.s = 19);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -84,7 +84,7 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 ;
-__export(__webpack_require__(18));
+__export(__webpack_require__(20));
 
 
 /***/ }),
@@ -194,18 +194,24 @@ exports.Display = Display;
 
 "use strict";
 
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 const lodash_1 = __webpack_require__(0);
 const field_1 = __webpack_require__(2);
 exports.Field = field_1.Field;
-const boolean_1 = __webpack_require__(11);
+const boolean_1 = __webpack_require__(12);
 exports.Boolean = boolean_1.Boolean;
-const date_1 = __webpack_require__(12);
+const date_1 = __webpack_require__(13);
 exports.DateField = date_1.DateField;
-const embedded_1 = __webpack_require__(13);
+const embedded_1 = __webpack_require__(14);
 exports.Embedded = embedded_1.Embedded;
-const file_1 = __webpack_require__(14);
+const file_1 = __webpack_require__(15);
 exports.File = file_1.File;
+const multiple_1 = __webpack_require__(16);
+exports.Multiple = multiple_1.Multiple;
+__export(__webpack_require__(5));
 function create(id, type) {
     switch (type) {
         case "boolean":
@@ -216,6 +222,8 @@ function create(id, type) {
             return new embedded_1.Embedded(id);
         case "File":
             return new file_1.File(id);
+        case "multiple":
+            return new multiple_1.Multiple(id);
         default:
             return null;
     }
@@ -240,16 +248,84 @@ exports.extract = extract;
 
 "use strict";
 
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(16));
-__export(__webpack_require__(6));
+const lodash_1 = __webpack_require__(0);
+const field_1 = __webpack_require__(2);
+const display_1 = __webpack_require__(3);
+const interfaces_1 = __webpack_require__(1);
+class ChoiceValue extends interfaces_1.ValidableObject {
+    constructor(id) {
+        super();
+        this.id = id;
+    }
+    serialize() {
+        return Object.assign({}, super.serialize(), { id: this.id, label: this.label });
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        this.label = obj.label;
+        return this;
+    }
+}
+exports.ChoiceValue = ChoiceValue;
+class ChoiceField extends field_1.Field {
+    constructor() {
+        super(...arguments);
+        this.values = new Map();
+        this.display = new display_1.Display();
+    }
+    isEmpty() {
+        return this.values.size == 0;
+    }
+    getValue(id) {
+        return this.values.get(id);
+    }
+    createValue(id, label = '') {
+        let v = new ChoiceValue(id);
+        v.label = label;
+        this.values.set(id, v);
+        this.display.add(v);
+        return v;
+    }
+    removeValue(v) {
+        this.values.delete(v.id);
+        this.display.remove(v);
+    }
+    serialize() {
+        return Object.assign({}, super.serialize(), { values: lodash_1.map(this.display.items, (id) => this.getValue(id).serialize()) });
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        this.values = new Map();
+        this.display = new display_1.Display();
+        for (let v of obj.values) {
+            const id = lodash_1.toSafeInteger(v.id);
+            const cv = new ChoiceValue(id).deserialize(v);
+            this.values.set(id, cv);
+            this.display.add(cv);
+        }
+        return this;
+    }
+}
+exports.ChoiceField = ChoiceField;
 
 
 /***/ }),
 /* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__(18));
+__export(__webpack_require__(7));
+
+
+/***/ }),
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -304,7 +380,7 @@ exports.State = State;
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -329,7 +405,7 @@ exports.Section = Section;
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -357,23 +433,6 @@ exports.User = User;
 
 
 /***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(4));
-__export(__webpack_require__(5));
-__export(__webpack_require__(3));
-__export(__webpack_require__(15));
-__export(__webpack_require__(7));
-
-
-/***/ }),
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -383,11 +442,28 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__(4));
+__export(__webpack_require__(6));
+__export(__webpack_require__(3));
+__export(__webpack_require__(17));
 __export(__webpack_require__(8));
 
 
 /***/ }),
 /* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__(9));
+
+
+/***/ }),
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -424,7 +500,7 @@ exports.Boolean = Boolean;
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -455,7 +531,7 @@ exports.DateField = DateField;
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -545,7 +621,7 @@ exports.Embedded = Embedded;
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -561,7 +637,63 @@ exports.File = File;
 
 
 /***/ }),
-/* 15 */
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const lodash_1 = __webpack_require__(0);
+const choice_1 = __webpack_require__(5);
+class Multiple extends choice_1.ChoiceField {
+    constructor() {
+        super(...arguments);
+        this.default = new Array();
+    }
+    type() {
+        return "multiple";
+    }
+    removeValue(v) {
+        super.removeValue(v);
+        if (this.isDefault(v)) {
+            this.toggleDefault(v);
+        }
+    }
+    isDefault(v) {
+        return this.default.indexOf(v.id) != -1;
+    }
+    toggleDefault(v) {
+        let idx = this.default.indexOf(v.id);
+        if (idx != -1) {
+            this.default.splice(idx, 1);
+        }
+        else {
+            this.default.push(v.id);
+        }
+    }
+    serialize() {
+        let res = super.serialize();
+        if (!lodash_1.isEmpty(this.default)) {
+            res['default'] = this.default;
+        }
+        return res;
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        if (!lodash_1.isEmpty(obj.default)) {
+            this.default = new Array();
+            for (let id of obj.default) {
+                this.default.push(lodash_1.toSafeInteger(id));
+            }
+        }
+        return this;
+    }
+}
+exports.Multiple = Multiple;
+
+
+/***/ }),
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -569,10 +701,10 @@ exports.File = File;
 Object.defineProperty(exports, "__esModule", { value: true });
 const lodash_1 = __webpack_require__(0);
 const interfaces_1 = __webpack_require__(1);
-const user_1 = __webpack_require__(8);
-const section_1 = __webpack_require__(7);
+const user_1 = __webpack_require__(9);
+const section_1 = __webpack_require__(8);
 const field_1 = __webpack_require__(4);
-const fsm_1 = __webpack_require__(5);
+const fsm_1 = __webpack_require__(6);
 const display_1 = __webpack_require__(3);
 class Form extends interfaces_1.ValidableObject {
     constructor() {
@@ -754,7 +886,7 @@ exports.Form = Form;
 
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -762,7 +894,7 @@ exports.Form = Form;
 Object.defineProperty(exports, "__esModule", { value: true });
 const lodash_1 = __webpack_require__(0);
 const interfaces_1 = __webpack_require__(1);
-const state_1 = __webpack_require__(6);
+const state_1 = __webpack_require__(7);
 class FSM extends interfaces_1.ValidableObject {
     has(id) {
         return this.states.has(id);
@@ -849,7 +981,7 @@ exports.FSM = FSM;
 
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -858,13 +990,13 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(9));
-__export(__webpack_require__(1));
 __export(__webpack_require__(10));
+__export(__webpack_require__(1));
+__export(__webpack_require__(11));
 
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

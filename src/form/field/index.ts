@@ -5,7 +5,9 @@ import  { Boolean } from "./boolean";
 import  { DateField } from "./date";
 import  { Embedded } from "./embedded";
 import  { File } from "./file";
+import  { Multiple } from "./multiple";
 
+export * from './choice';
 
 export {
   Field,
@@ -13,6 +15,7 @@ export {
   DateField,
   Embedded,
   File,
+  Multiple,
 }
 
 export interface FieldContainer {
@@ -35,6 +38,8 @@ export function create(id: number, type: string): Field {
       return new Embedded(id);
     case "File":
       return new File(id);
+    case "multiple":
+      return new Multiple(id);
     default:
       return null;
   }
