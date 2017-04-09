@@ -3,12 +3,12 @@ import { isEmpty, isObject, each, toSafeInteger } from 'lodash';
 import { ValidableObject } from '../interfaces';
 import { User } from '../user/user';
 import { Section } from './section';
-import { Field, extract, create, Embedded } from './field';
+import { Field, FieldContainer, extract, create, Embedded } from './field';
 import { FSM } from './fsm';
 import { Displayable, Display } from './display';
 
 
-export class Form extends ValidableObject {
+export class Form extends ValidableObject implements FieldContainer {
   url: string = "";
   owner: User;
   created: Date;
@@ -42,6 +42,15 @@ export class Form extends ValidableObject {
     return this.fields.has(id);
   }
 
+  hasFieldsOfType(t: string): boolean {
+    for (let [id, field] of this.fields) {
+      if (field.type() == t) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   private createField(type, name: string = ''): Field {
     let f = create(this.nextid(), type);
     return f;
@@ -73,6 +82,16 @@ export class Form extends ValidableObject {
     return this.fields.get(id);
   }
 
+  getFieldsOfType(t: string): Array<Field> {
+    let res = new Array<Field>();
+    for (let [id, field] of this.fields) {
+      if (field.type() == t) {
+        res.push(field);
+      }
+    }
+    return res;
+  }
+
   getEmbeddedField(id: number): [Embedded, Field] {
     for (let emb of this.getEmbeddeds()) {
       if (emb.hasField(id)) {
@@ -84,11 +103,11 @@ export class Form extends ValidableObject {
 
   getEmbeddeds(): Array<Embedded> {
     let res = new Array<Embedded>();
-    this.fields.forEach((f, id) => {
-      if (f.type() == "embedded" && (<Embedded>f)) {
-        res.push((<Embedded>f));
+    for (let [id, field] of this.fields) {
+      if (field.type() == "embedded" && (<Embedded>field)) {
+        res.push((<Embedded>field));
       }
-    });
+    }
     return res;
   }
 

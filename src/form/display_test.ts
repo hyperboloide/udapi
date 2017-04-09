@@ -5,7 +5,7 @@ import { Form } from "./form";
 import { ExampleForm } from "./form_test";
 import { Display } from "./display";
 
-export const ExampleDisplay = [1, 2, 3]
+const ExampleDisplay = [1, 2, 3]
 
 describe('display', () => {
 

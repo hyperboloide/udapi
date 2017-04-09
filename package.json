@@ -1,6 +1,6 @@
 {
   "name": "ud.api_ts",
-  "version": "2.0.1",
+  "version": "0.2.1",
   "description": "Usine Data Type script api client library",
   "author": "hyperboloide",
   "main": "bundle.js",
@@ -12,7 +12,8 @@
   "scripts": {
     "test": "mocha --recursive -r ts-node/register `find src -name '*_test.ts'`",
     "build": "make",
-    "prepublish": "make"
+    "prepublish": "make",
+    "doc": "http-server doc --silent"
   },
   "devDependencies": {
     "@types/chai": "^3.4.35",
@@ -24,8 +25,8 @@
     "chai": "^3.5.0",
     "mocha": "^3.2.0",
     "ts-node": "^2.1.0",
+    "typedoc": "^0.5.10",
     "typescript": "^2.2.1",
-    "uglify-js": "^2.8.16",
     "webpack": "^2.3.2"
   },
   "dependencies": {

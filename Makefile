@@ -1,22 +1,24 @@
 DEST = bundle.js
+DOC = doc
+SRC = src
 
-all: clean webpack babel uglifyjs
+all: clean webpack doc
 
 webpack:
 	webpack
 
-babel:
-	babel $(DEST) \
-		--source-maps \
-		--out-file $(DEST)
-
-uglifyjs:
-	uglifyjs \
-		--compress \
-		--mangle \
-		--screw-ie8 \
-		--in-source-map $(DEST).map \
-		-o $(DEST) $(DEST)
-
 clean:
-	rm -fr $(DEST)
+	rm -fr $(DEST) $(DOC)
+
+doc:
+	typedoc \
+		--mode modules \
+		--name "Usine Data API client" \
+		--readme ./README.md \
+		--module commonjs \
+		--exclude "**/*_test.ts" \
+		--excludePrivate \
+		--hideGenerator \
+		--out $(DOC) $(SRC)
+
+.PHONY: all webpack babel uglifyjs clean doc

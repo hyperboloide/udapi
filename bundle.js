@@ -1,1 +1,896 @@
-"use strict";function _possibleConstructorReturn(e,t){if(!e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!t||"object"!=typeof t&&"function"!=typeof t?e:t}function _inherits(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(Object.setPrototypeOf?Object.setPrototypeOf(e,t):e.__proto__=t)}function _classCallCheck(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}var _slicedToArray=function(){function e(e,t){var i=[],r=!0,n=!1,s=void 0;try{for(var a,o=e[Symbol.iterator]();!(r=(a=o.next()).done)&&(i.push(a.value),!t||i.length!==t);r=!0);}catch(e){n=!0,s=e}finally{try{!r&&o.return&&o.return()}finally{if(n)throw s}}return i}return function(t,i){if(Array.isArray(t))return t;if(Symbol.iterator in Object(t))return e(t,i);throw new TypeError("Invalid attempt to destructure non-iterable instance")}}(),_get=function e(t,i,r){null===t&&(t=Function.prototype);var n=Object.getOwnPropertyDescriptor(t,i);if(void 0===n){var s=Object.getPrototypeOf(t);return null===s?void 0:e(s,i,r)}if("value"in n)return n.value;var a=n.get;if(void 0!==a)return a.call(r)},_createClass=function(){function e(e,t){for(var i=0;i<t.length;i++){var r=t[i];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,i,r){return i&&e(t.prototype,i),r&&e(t,r),t}}();exports.udApi=function(e){function t(r){if(i[r])return i[r].exports;var n=i[r]={i:r,l:!1,exports:{}};return e[r].call(n.exports,n,n.exports,t),n.l=!0,n.exports}var i={};return t.m=e,t.c=i,t.i=function(e){return e},t.d=function(e,i,r){t.o(e,i)||Object.defineProperty(e,i,{configurable:!1,enumerable:!0,get:r})},t.n=function(e){var i=e&&e.__esModule?function(){return e.default}:function(){return e};return t.d(i,"a",i),i},t.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},t.p="",t(t.s=15)}([function(e,t){e.exports=require("lodash")},function(e,t,i){Object.defineProperty(t,"__esModule",{value:!0}),function(e){for(var i in e)t.hasOwnProperty(i)||(t[i]=e[i])}(i(16))},function(e,t,i){Object.defineProperty(t,"__esModule",{value:!0});var r=i(0),n=function(){function e(){_classCallCheck(this,e),this.items=new Array}return _createClass(e,[{key:"index",value:function(e){return this.items.findIndex(function(t){return t==e.id})}},{key:"has",value:function(e){return this.index(e)!=-1}},{key:"add",value:function(e){this.has(e)||this.items.push(e.id)}},{key:"canMoveDown",value:function(e){return e.id!=r.last(this.items)}},{key:"canMoveUp",value:function(e){return e.id!=r.head(this.items)}},{key:"moveUp",value:function(e){if(this.canMoveUp(e)){var t=this.index(e),i=this.items[t];this.items[t]=this.items[t-1],this.items[t-1]=i}}},{key:"moveDown",value:function(e){if(this.canMoveDown(e)){var t=this.index(e),i=this.items[t];this.items[t]=this.items[t+1],this.items[t+1]=i}}},{key:"remove",value:function(e){var t=this.index(e);this.items.splice(t,1)}},{key:"serialize",value:function(){return this.items}},{key:"deserialize",value:function(e){var t=this;return this.items=new Array,r.each(e,function(e){return t.items.push(r.toSafeInteger(e))}),this}}]),e}();t.Display=n},function(e,t,i){Object.defineProperty(t,"__esModule",{value:!0});var r=i(0),n=i(1),s=function(e){function t(e){_classCallCheck(this,t);var i=_possibleConstructorReturn(this,(t.__proto__||Object.getPrototypeOf(t)).call(this));return i.name="",i.help="",i.mandatory=!1,i.id=e,i}return _inherits(t,e),_createClass(t,[{key:"serialize",value:function(){var e=Object.assign({},_get(t.prototype.__proto__||Object.getPrototypeOf(t.prototype),"serialize",this).call(this),{name:this.name,type:this.type(),mandatory:this.mandatory});return r.isEmpty(this.help)||(e.help=this.help),e}},{key:"deserialize",value:function(e){return _get(t.prototype.__proto__||Object.getPrototypeOf(t.prototype),"deserialize",this).call(this,e),r.isEmpty(e)?this:(this.name=e.name,this.help=e.help,this.mandatory=e.mandatory,this)}}]),t}(n.ValidableObject);t.Field=s},function(e,t,i){function r(e,t){switch(t){case"boolean":return new o.Boolean(e);default:return null}}function n(e,t){if(!s.isString(t.type))return null;var i=r(e,t.type);return s.isEmpty(i)||i.deserialize(t),i}Object.defineProperty(t,"__esModule",{value:!0});var s=i(0),a=i(3);t.Field=a.Field;var o=i(11);t.Boolean=o.Boolean;var l=i(12);t.Embedded=l.Embedded,t.create=r,t.extract=n},function(e,t,i){function r(e){for(var i in e)t.hasOwnProperty(i)||(t[i]=e[i])}Object.defineProperty(t,"__esModule",{value:!0}),r(i(14)),r(i(6))},function(e,t,i){Object.defineProperty(t,"__esModule",{value:!0});var r=i(0),n=i(1),s=function(e){function t(e){_classCallCheck(this,t);var i=_possibleConstructorReturn(this,(t.__proto__||Object.getPrototypeOf(t)).call(this));return i.id=e,i}return _inherits(t,e),_createClass(t,[{key:"hasField",value:function(e){return r.includes(this.fields,e.id)}},{key:"addField",value:function(e){this.hasField(e)||this.fields.push(e.id)}},{key:"removeField",value:function(e){this.fields=r.without(this.fields,e.id)}},{key:"hasNext",value:function(e){return r.includes(this.nexts,e.id)}},{key:"addNext",value:function(e){this.hasNext(e)||this.nexts.push(e.id)}},{key:"removeNext",value:function(e){this.nexts=r.without(this.nexts,e.id)}},{key:"isTerminal",value:function(){return 0==this.nexts.length}},{key:"serialize",value:function(){return Object.assign({},_get(t.prototype.__proto__||Object.getPrototypeOf(t.prototype),"serialize",this).call(this),{name:this.name,fields:this.fields,nexts:this.nexts})}},{key:"deserialize",value:function(e){return _get(t.prototype.__proto__||Object.getPrototypeOf(t.prototype),"deserialize",this).call(this,e),r.isObject(e)&&(this.name=e.name,this.fields=e.fields,this.nexts=e.nexts),this}}]),t}(n.ValidableObject);t.State=s},function(e,t,i){Object.defineProperty(t,"__esModule",{value:!0});var r=i(1),n=function(e){function t(e){_classCallCheck(this,t);var i=_possibleConstructorReturn(this,(t.__proto__||Object.getPrototypeOf(t)).call(this));return i.id=e,i}return _inherits(t,e),_createClass(t,[{key:"serialize",value:function(){return Object.assign({},_get(t.prototype.__proto__||Object.getPrototypeOf(t.prototype),"serialize",this).call(this),{html:this.html})}},{key:"deserialize",value:function(e){return _get(t.prototype.__proto__||Object.getPrototypeOf(t.prototype),"deserialize",this).call(this,e),this.html=e.html,this}}]),t}(r.ValidableObject);t.Section=n},function(e,t,i){Object.defineProperty(t,"__esModule",{value:!0});var r=function(){function e(){_classCallCheck(this,e)}return _createClass(e,[{key:"equal",value:function(e){return e.id==this.id}},{key:"serialize",value:function(){return{id:this.id,name:this.name,picture:this.picture}}},{key:"deserialize",value:function(e){return this.id=e.id,this.name=e.name,this.picture=e.picture,this}}]),e}();t.User=r},function(e,t,i){function r(e){for(var i in e)t.hasOwnProperty(i)||(t[i]=e[i])}Object.defineProperty(t,"__esModule",{value:!0}),r(i(4)),r(i(5)),r(i(2)),r(i(13)),r(i(7))},function(e,t,i){Object.defineProperty(t,"__esModule",{value:!0}),function(e){for(var i in e)t.hasOwnProperty(i)||(t[i]=e[i])}(i(8))},function(e,t,i){Object.defineProperty(t,"__esModule",{value:!0});var r=i(0),n=i(3),s=function(e){function t(){return _classCallCheck(this,t),_possibleConstructorReturn(this,(t.__proto__||Object.getPrototypeOf(t)).apply(this,arguments))}return _inherits(t,e),_createClass(t,[{key:"type",value:function(){return"boolean"}},{key:"serialize",value:function(){var e=_get(t.prototype.__proto__||Object.getPrototypeOf(t.prototype),"serialize",this).call(this);return r.isEmpty(this.label)||(e.label=this.label),r.isEmpty(this.default)||(e.default=this.default),e}},{key:"deserialize",value:function(e){return _get(t.prototype.__proto__||Object.getPrototypeOf(t.prototype),"deserialize",this).call(this,e),r.isEmpty(this.label)||(this.label=e.label),r.isEmpty(this.default)||(this.default=e.default),this}}]),t}(n.Field);t.Boolean=s},function(e,t,i){Object.defineProperty(t,"__esModule",{value:!0});var r=i(3),n=i(2),s=function e(){_classCallCheck(this,e),this.max=99,this.min=1};t.EmbeddedOptions=s;var a=function(e){function t(){_classCallCheck(this,t);var e=_possibleConstructorReturn(this,(t.__proto__||Object.getPrototypeOf(t)).apply(this,arguments));return e.fields=new Map,e.display=new n.Display,e.options=new s,e}return _inherits(t,e),_createClass(t,[{key:"type",value:function(){return"embedded"}},{key:"isEmpty",value:function(){return 0==this.fields.size}},{key:"hasField",value:function(e){return this.fields.has(e)}},{key:"getField",value:function(e){return this.fields.get(e)}}]),t}(r.Field);t.Embedded=a},function(e,t,i){Object.defineProperty(t,"__esModule",{value:!0});var r=i(0),n=i(1),s=i(8),a=i(7),o=i(4),l=i(5),u=i(2),c=function(e){function t(){_classCallCheck(this,t);var e=_possibleConstructorReturn(this,(t.__proto__||Object.getPrototypeOf(t)).apply(this,arguments));return e.url="",e.proto=2,e.version=0,e.states=!1,e.name="",e.description="",e.fields=new Map,e.sections=new Map,e.display=new u.Display,e._nextid=0,e}return _inherits(t,e),_createClass(t,[{key:"nextid",value:function(){return this._nextid+=1}},{key:"isNew",value:function(){return 0==this.version}},{key:"isEmpty",value:function(){return 0==this.fields.size}},{key:"hasField",value:function(e){return this.fields.has(e)}},{key:"createField",value:function(e){arguments.length>1&&void 0!==arguments[1]&&arguments[1];return o.create(this.nextid(),e)}},{key:"addField",value:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:"",i=this.createField(e,t);return this.fields.set(i.id,i),this.display.add(i),this.fsm.addField(i),i}},{key:"addEmbeddedField",value:function(e,t){var i=arguments.length>2&&void 0!==arguments[2]?arguments[2]:"";if(this.hasField(e.id)){var r=this.createField(t,i);return e.fields.set(r.id,r),e.display.add(r),this.fsm.addField(r),r}}},{key:"getField",value:function(e){return this.fields.get(e)}},{key:"getEmbeddedField",value:function(e){var t=!0,i=!1,r=void 0;try{for(var n,s=this.getEmbeddeds()[Symbol.iterator]();!(t=(n=s.next()).done);t=!0){var a=n.value;if(a.hasField(e))return[a,a.getField(e)]}}catch(e){i=!0,r=e}finally{try{!t&&s.return&&s.return()}finally{if(i)throw r}}return[null,null]}},{key:"getEmbeddeds",value:function(){var e=new Array;return this.fields.forEach(function(t,i){"embedded"==t.type()&&t&&e.push(t)}),e}},{key:"removeField",value:function(e){if(this.hasField(e.id))this.fields.delete(e.id),this.display.remove(e);else{var t=this.getEmbeddedField(e.id),i=_slicedToArray(t,2),n=i[0],s=i[1];r.isEmpty(e)||(n.fields.delete(s.id),n.display.remove(s))}this.fsm.removeField(e)}},{key:"getSection",value:function(e){return this.sections.get(e)}},{key:"newSection",value:function(){var e=new a.Section(this.nextid());return this.sections.set(e.id,e),this.display.add(e),e}},{key:"removeSection",value:function(e){this.sections.delete(e.id),this.display.remove(e)}},{key:"serialize",value:function(){var e={};this.fields.forEach(function(t,i){return e[""+i]=t.serialize()});var i={};return this.sections.forEach(function(e,t){return i[""+t]=e.serialize()}),Object.assign({},_get(t.prototype.__proto__||Object.getPrototypeOf(t.prototype),"serialize",this).call(this),{url:this.url,owner:this.owner.serialize(),created:this.created.toJSON(),updated:this.updated.toJSON(),proto:this.proto,version:this.version,states:this.states,name:this.name,description:this.description,fields:e,sections:i,display:this.display.serialize(),fsm:this.fsm.serialize(),nextid:this._nextid})}},{key:"deserialize",value:function(e){var i=this;return _get(t.prototype.__proto__||Object.getPrototypeOf(t.prototype),"deserialize",this).call(this,e),r.isEmpty(e)?this:(this.url=e.url,r.isObject(e.owner)&&(this.owner=(new s.User).deserialize(e.owner)),r.isEmpty("created")||(this.created=new Date(e.created)),r.isEmpty("updated")||(this.updated=new Date(e.updated)),this.proto=e.proto,this.version=e.version,this.states=e.states,this.name=e.name,this.description=e.description,this.fields=new Map,r.each(e.fields,function(e,t){var n=r.toSafeInteger(t);i.fields.set(n,o.extract(n,e))}),this.sections=new Map,r.each(e.sections,function(e,t){var n=r.toSafeInteger(t);i.sections.set(n,new a.Section(n).deserialize(e))}),this.display=(new u.Display).deserialize(e.display),r.isObject(e.fsm)&&(this.fsm=(new l.FSM).deserialize(e.fsm)),this._nextid=r.toSafeInteger(e.nextid),this)}}]),t}(n.ValidableObject);t.Form=c},function(e,t,i){Object.defineProperty(t,"__esModule",{value:!0});var r=i(0),n=i(1),s=i(6),a=function(e){function t(){return _classCallCheck(this,t),_possibleConstructorReturn(this,(t.__proto__||Object.getPrototypeOf(t)).apply(this,arguments))}return _inherits(t,e),_createClass(t,[{key:"has",value:function(e){return this.states.has(e)}},{key:"length",value:function(){return this.states.size}},{key:"get",value:function(e){return this.states.get(e)}},{key:"all",value:function(){return this.states.values()}},{key:"add",value:function(e){this.has(e.id)||this.states.set(e.id,e)}},{key:"remove",value:function(e){this.states.delete(e.id)}},{key:"hasField",value:function(e){var t=!0,i=!1,r=void 0;try{for(var n,s=this.states.values()[Symbol.iterator]();!(t=(n=s.next()).done);t=!0){if(n.value.hasField(e))return!0}}catch(e){i=!0,r=e}finally{try{!t&&s.return&&s.return()}finally{if(i)throw r}}return!1}},{key:"addField",value:function(e){this.states.forEach(function(t){return t.addField(e)})}},{key:"removeField",value:function(e){this.states.forEach(function(t){return t.removeField(e)})}},{key:"statesFor",value:function(e){var t=new Array,i=!0,r=!1,n=void 0;try{for(var s,a=this.states.values()[Symbol.iterator]();!(i=(s=a.next()).done);i=!0){var o=s.value;o.hasField(e)&&t.push(o)}}catch(e){r=!0,n=e}finally{try{!i&&a.return&&a.return()}finally{if(r)throw n}}return t}},{key:"hasChildErrors",value:function(){var e=!0,t=!1,i=void 0;try{for(var r,n=this.states.values()[Symbol.iterator]();!(e=(r=n.next()).done);e=!0){if(r.value.hasErrors())return!0}}catch(e){t=!0,i=e}finally{try{!e&&n.return&&n.return()}finally{if(t)throw i}}return!1}},{key:"setErrors",value:function(e){var i=this;if(_get(t.prototype.__proto__||Object.getPrototypeOf(t.prototype),"setErrors",this).call(this,e),r.has(e,"states.items")){var n=e.states.items;r.each(n,function(e,t){var n=r.toSafeInteger(t);i.has(n)&&i.get(n).setErrors(e)})}}},{key:"serialize",value:function(){var e={};return this.states.forEach(function(t,i){return e[""+i]=t.serialize()}),Object.assign({},_get(t.prototype.__proto__||Object.getPrototypeOf(t.prototype),"serialize",this).call(this),{initial:this.initial.id,states:e})}},{key:"deserialize",value:function(e){var i=this;return _get(t.prototype.__proto__||Object.getPrototypeOf(t.prototype),"deserialize",this).call(this,e),this.states=new Map,r.isObject(e.states)&&(r.each(e.states,function(e,t){var n=r.toSafeInteger(t);i.states.set(n,new s.State(n).deserialize(e))}),this.initial=this.states.get(r.toSafeInteger(e.initial))),this}}]),t}(n.ValidableObject);t.FSM=a},function(e,t,i){function r(e){for(var i in e)t.hasOwnProperty(i)||(t[i]=e[i])}Object.defineProperty(t,"__esModule",{value:!0}),r(i(9)),r(i(1)),r(i(10))},function(e,t,i){Object.defineProperty(t,"__esModule",{value:!0});var r=i(0),n=function(){function e(){_classCallCheck(this,e)}return _createClass(e,[{key:"serialize",value:function(){return{code:this.code,data:this.data}}},{key:"deserialize",value:function(e){return this.code=e.code,this.data=e.data,this}}]),e}();t.ValidationError=n;var s=function(){function e(){_classCallCheck(this,e),this.errors=new Array}return _createClass(e,[{key:"hasErrors",value:function(){return this.errors.length>0}},{key:"setErrors",value:function(e){this._extract(e)}},{key:"first",value:function(){if(this.hasErrors())return this.errors[0]}},{key:"serialize",value:function(){var e=[],t=!0,i=!1,r=void 0;try{for(var n,s=this.errors[Symbol.iterator]();!(t=(n=s.next()).done);t=!0){var a=n.value;e.push(a.serialize())}}catch(e){i=!0,r=e}finally{try{!t&&s.return&&s.return()}finally{if(i)throw r}}return e}},{key:"deserialize",value:function(e){return this._extract(e)}},{key:"_extract",value:function(e){var t=this;return this.errors=new Array,r.isArray(e)&&r.each(e,function(e){return t.errors.push((new n).deserialize(e))}),this}}]),e}();t.ValidationList=s;var a=function(){function e(){_classCallCheck(this,e),this.errors=new Map}return _createClass(e,[{key:"hasErrors",value:function(){return this.errors.size>0}},{key:"hasChildErrors",value:function(){return!1}},{key:"setErrors",value:function(e){this._extract(e)}},{key:"serialize",value:function(){var e={};return this.errors.forEach(function(t,i){return e[""+i]=t.serialize()}),r.isEmpty(e)?{}:{errors:e}}},{key:"deserialize",value:function(e){return this._extract(e.errors)}},{key:"_extract",value:function(e){var t=this;return this.errors=new Map,r.isObject(e)&&r.each(e,function(e,i){var n=(r.toSafeInteger(i),(new s).deserialize(e));n.hasErrors()&&t.errors.set(i,n)}),this}}]),e}();t.ValidableObject=a}]);
+exports["udApi"] =
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
+/******/
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// identity function for calling harmony imports with the correct context
+/******/ 	__webpack_require__.i = function(value) { return value; };
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 15);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports) {
+
+module.exports = require("lodash");
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+;
+__export(__webpack_require__(16));
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const lodash_1 = __webpack_require__(0);
+class Display {
+    constructor() {
+        this.items = new Array();
+    }
+    index(obj) {
+        return this.items.findIndex((id) => id == obj.id);
+    }
+    has(obj) {
+        return this.index(obj) != -1;
+    }
+    add(obj) {
+        if (!this.has(obj)) {
+            this.items.push(obj.id);
+        }
+    }
+    canMoveDown(obj) {
+        return this.has(obj) && obj.id != lodash_1.last(this.items);
+    }
+    canMoveUp(obj) {
+        return this.has(obj) && obj.id != lodash_1.head(this.items);
+    }
+    moveUp(d) {
+        if (this.canMoveUp(d)) {
+            let idx = this.index(d);
+            let tmp = this.items[idx];
+            this.items[idx] = this.items[idx - 1];
+            this.items[idx - 1] = tmp;
+        }
+    }
+    moveDown(d) {
+        if (this.canMoveDown(d)) {
+            let idx = this.index(d);
+            let tmp = this.items[idx];
+            this.items[idx] = this.items[idx + 1];
+            this.items[idx + 1] = tmp;
+        }
+    }
+    remove(d) {
+        let idx = this.index(d);
+        this.items.splice(idx, 1);
+    }
+    serialize() {
+        return this.items;
+    }
+    deserialize(obj) {
+        this.items = new Array();
+        lodash_1.each(obj, (v) => this.items.push(lodash_1.toSafeInteger(v)));
+        return this;
+    }
+}
+exports.Display = Display;
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const lodash_1 = __webpack_require__(0);
+const field_1 = __webpack_require__(4);
+exports.Field = field_1.Field;
+const boolean_1 = __webpack_require__(11);
+exports.Boolean = boolean_1.Boolean;
+const embedded_1 = __webpack_require__(12);
+exports.Embedded = embedded_1.Embedded;
+function create(id, type) {
+    switch (type) {
+        case "boolean":
+            return new boolean_1.Boolean(id);
+        case "embedded":
+            return new embedded_1.Embedded(id);
+        default:
+            return null;
+    }
+}
+exports.create = create;
+function extract(id, obj) {
+    if (!lodash_1.isString(obj.type)) {
+        return null;
+    }
+    let res = create(id, obj.type);
+    if (!lodash_1.isEmpty(res)) {
+        res.deserialize(obj);
+    }
+    return res;
+}
+exports.extract = extract;
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const lodash_1 = __webpack_require__(0);
+const interfaces_1 = __webpack_require__(1);
+class Field extends interfaces_1.ValidableObject {
+    constructor(id) {
+        super();
+        this.name = "";
+        this.help = "";
+        this.mandatory = false;
+        this.id = id;
+    }
+    serialize() {
+        let res = Object.assign({}, super.serialize(), { name: this.name, type: this.type(), mandatory: this.mandatory });
+        if (!lodash_1.isEmpty(this.help)) {
+            res['help'] = this.help;
+        }
+        return res;
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        if (lodash_1.isEmpty(obj)) {
+            return this;
+        }
+        this.name = obj.name;
+        this.help = obj.help;
+        if (lodash_1.isBoolean(obj.mandatory)) {
+            this.mandatory = obj.mandatory;
+        }
+        return this;
+    }
+}
+exports.Field = Field;
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__(14));
+__export(__webpack_require__(6));
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const lodash_1 = __webpack_require__(0);
+const interfaces_1 = __webpack_require__(1);
+class State extends interfaces_1.ValidableObject {
+    constructor(id) {
+        super();
+        this.id = id;
+    }
+    hasField(field) {
+        return lodash_1.includes(this.fields, field.id);
+    }
+    addField(field) {
+        if (!this.hasField(field)) {
+            this.fields.push(field.id);
+        }
+    }
+    removeField(field) {
+        this.fields = lodash_1.without(this.fields, field.id);
+    }
+    hasNext(state) {
+        return lodash_1.includes(this.nexts, state.id);
+    }
+    addNext(state) {
+        if (!this.hasNext(state)) {
+            this.nexts.push(state.id);
+        }
+    }
+    removeNext(state) {
+        this.nexts = lodash_1.without(this.nexts, state.id);
+    }
+    isTerminal() {
+        return this.nexts.length == 0;
+    }
+    serialize() {
+        return Object.assign({}, super.serialize(), { name: this.name, fields: this.fields, nexts: this.nexts });
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        if (lodash_1.isObject(obj)) {
+            this.name = obj.name;
+            this.fields = obj.fields;
+            this.nexts = obj.nexts;
+        }
+        return this;
+    }
+}
+exports.State = State;
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const interfaces_1 = __webpack_require__(1);
+class Section extends interfaces_1.ValidableObject {
+    constructor(id) {
+        super();
+        this.id = id;
+    }
+    serialize() {
+        return Object.assign({}, super.serialize(), { html: this.html });
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        this.html = obj.html;
+        return this;
+    }
+}
+exports.Section = Section;
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class User {
+    equal(u) {
+        return u.id == this.id;
+    }
+    serialize() {
+        return {
+            id: this.id,
+            name: this.name,
+            picture: this.picture,
+        };
+    }
+    deserialize(obj) {
+        this.id = obj.id;
+        this.name = obj.name;
+        this.picture = obj.picture;
+        return this;
+    }
+}
+exports.User = User;
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__(3));
+__export(__webpack_require__(5));
+__export(__webpack_require__(2));
+__export(__webpack_require__(13));
+__export(__webpack_require__(7));
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__(8));
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const lodash_1 = __webpack_require__(0);
+const field_1 = __webpack_require__(4);
+class Boolean extends field_1.Field {
+    type() {
+        return "boolean";
+    }
+    serialize() {
+        let res = super.serialize();
+        if (!lodash_1.isEmpty(this.label)) {
+            res['label'] = this.label;
+        }
+        if (!lodash_1.isEmpty(this.default)) {
+            res['default'] = this.default;
+        }
+        return res;
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        if (!lodash_1.isEmpty(this.label)) {
+            this.label = obj.label;
+        }
+        if (!lodash_1.isEmpty(this.default)) {
+            this.default = obj.default;
+        }
+        return this;
+    }
+}
+exports.Boolean = Boolean;
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const lodash_1 = __webpack_require__(0);
+const _1 = __webpack_require__(3);
+const display_1 = __webpack_require__(2);
+const interfaces_1 = __webpack_require__(1);
+class EmbeddedOptions extends interfaces_1.ValidableObject {
+    constructor() {
+        super(...arguments);
+        this.max = 99;
+        this.min = 1;
+    }
+    serialize() {
+        return Object.assign({}, super.serialize(), { min: this.min, max: this.max });
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        if (lodash_1.isObject(obj)) {
+            if (lodash_1.isNumber(obj.min)) {
+                this.min = lodash_1.toSafeInteger(obj.min);
+            }
+            if (lodash_1.isNumber(obj.max)) {
+                this.max = lodash_1.toSafeInteger(obj.max);
+            }
+        }
+        return this;
+    }
+}
+exports.EmbeddedOptions = EmbeddedOptions;
+class Embedded extends _1.Field {
+    constructor() {
+        super(...arguments);
+        this.fields = new Map();
+        this.display = new display_1.Display();
+        this.options = new EmbeddedOptions();
+    }
+    type() {
+        return "embedded";
+    }
+    isEmpty() {
+        return this.fields.size == 0;
+    }
+    hasField(id) {
+        return this.fields.has(id);
+    }
+    hasFieldsOfType(t) {
+        for (let [id, field] of this.fields) {
+            if (field.type() == t) {
+                return true;
+            }
+        }
+        return false;
+    }
+    getField(id) {
+        return this.fields.get(id);
+    }
+    getFieldsOfType(t) {
+        let res = new Array();
+        for (let [id, field] of this.fields) {
+            if (field.type() == t) {
+                res.push(field);
+            }
+        }
+        return res;
+    }
+    serialize() {
+        let fields = {};
+        this.fields.forEach((f, id) => fields[`${id}`] = f.serialize());
+        return Object.assign({}, super.serialize(), { options: this.options.serialize(), fields: fields, display: this.display.serialize() });
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        this.fields = new Map();
+        lodash_1.each(obj.fields, (v, k) => {
+            let id = lodash_1.toSafeInteger(k);
+            this.fields.set(id, _1.extract(id, v));
+        });
+        this.display = new display_1.Display().deserialize(obj.display);
+        this.options = new EmbeddedOptions().deserialize(obj.options);
+        return this;
+    }
+}
+exports.Embedded = Embedded;
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const lodash_1 = __webpack_require__(0);
+const interfaces_1 = __webpack_require__(1);
+const user_1 = __webpack_require__(8);
+const section_1 = __webpack_require__(7);
+const field_1 = __webpack_require__(3);
+const fsm_1 = __webpack_require__(5);
+const display_1 = __webpack_require__(2);
+class Form extends interfaces_1.ValidableObject {
+    constructor() {
+        super(...arguments);
+        this.url = "";
+        this.proto = 2;
+        this.version = 0;
+        this.states = false;
+        this.name = "";
+        this.description = "";
+        this.fields = new Map();
+        this.sections = new Map();
+        this.display = new display_1.Display();
+        this._nextid = 0;
+    }
+    nextid() {
+        return this._nextid += 1;
+    }
+    isNew() {
+        return this.version == 0;
+    }
+    isEmpty() {
+        return this.fields.size == 0;
+    }
+    hasField(id) {
+        return this.fields.has(id);
+    }
+    hasFieldsOfType(t) {
+        for (let [id, field] of this.fields) {
+            if (field.type() == t) {
+                return true;
+            }
+        }
+        return false;
+    }
+    createField(type, name = '') {
+        let f = field_1.create(this.nextid(), type);
+        return f;
+    }
+    addField(type, name = '') {
+        let f = this.createField(type, name);
+        this.fields.set(f.id, f);
+        this.display.add(f);
+        this.fsm.addField(f);
+        return f;
+    }
+    addEmbeddedField(emb, type, name = '') {
+        if (!this.hasField(emb.id)) {
+            return;
+        }
+        let f = this.createField(type, name);
+        emb.fields.set(f.id, f);
+        emb.display.add(f);
+        this.fsm.addField(f);
+        return f;
+    }
+    getField(id) {
+        return this.fields.get(id);
+    }
+    getFieldsOfType(t) {
+        let res = new Array();
+        for (let [id, field] of this.fields) {
+            if (field.type() == t) {
+                res.push(field);
+            }
+        }
+        return res;
+    }
+    getEmbeddedField(id) {
+        for (let emb of this.getEmbeddeds()) {
+            if (emb.hasField(id)) {
+                return [emb, emb.getField(id)];
+            }
+        }
+        return [null, null];
+    }
+    getEmbeddeds() {
+        let res = new Array();
+        for (let [id, field] of this.fields) {
+            if (field.type() == "embedded" && field) {
+                res.push(field);
+            }
+        }
+        return res;
+    }
+    removeField(f) {
+        if (this.hasField(f.id)) {
+            if (f.type() == "embedded") {
+                let emb = f;
+                emb.fields.forEach((f) => this.removeField(f));
+            }
+            this.fields.delete(f.id);
+            this.display.remove(f);
+        }
+        else {
+            let [emb, res] = this.getEmbeddedField(f.id);
+            if (!lodash_1.isEmpty(f)) {
+                emb.fields.delete(res.id);
+                emb.display.remove(res);
+            }
+        }
+        this.fsm.removeField(f);
+    }
+    getSection(id) {
+        return this.sections.get(id);
+    }
+    addSection() {
+        let s = new section_1.Section(this.nextid());
+        this.sections.set(s.id, s);
+        this.display.add(s);
+        return s;
+    }
+    removeSection(s) {
+        this.sections.delete(s.id);
+        this.display.remove(s);
+    }
+    serialize() {
+        let fields = {};
+        this.fields.forEach((f, id) => fields[`${id}`] = f.serialize());
+        let sections = {};
+        this.sections.forEach((s, id) => sections[`${id}`] = s.serialize());
+        return Object.assign({}, super.serialize(), { url: this.url, owner: this.owner.serialize(), created: this.created.toJSON(), updated: this.updated.toJSON(), proto: this.proto, version: this.version, states: this.states, name: this.name, description: this.description, fields: fields, sections: sections, display: this.display.serialize(), fsm: this.fsm.serialize(), nextid: this._nextid });
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        if (lodash_1.isEmpty(obj)) {
+            return this;
+        }
+        this.url = obj.url;
+        if (lodash_1.isObject(obj.owner)) {
+            this.owner = new user_1.User().deserialize(obj.owner);
+        }
+        if (!lodash_1.isEmpty('created')) {
+            this.created = new Date(obj.created);
+        }
+        if (!lodash_1.isEmpty('updated')) {
+            this.updated = new Date(obj.updated);
+        }
+        this.proto = obj.proto;
+        this.version = obj.version;
+        this.states = obj.states;
+        this.name = obj.name;
+        this.description = obj.description;
+        this.fields = new Map();
+        lodash_1.each(obj.fields, (v, k) => {
+            let id = lodash_1.toSafeInteger(k);
+            this.fields.set(id, field_1.extract(id, v));
+        });
+        this.sections = new Map();
+        lodash_1.each(obj.sections, (v, k) => {
+            let id = lodash_1.toSafeInteger(k);
+            this.sections.set(id, new section_1.Section(id).deserialize(v));
+        });
+        this.display = new display_1.Display().deserialize(obj.display);
+        if (lodash_1.isObject(obj.fsm)) {
+            this.fsm = new fsm_1.FSM().deserialize(obj.fsm);
+        }
+        this._nextid = lodash_1.toSafeInteger(obj.nextid);
+        return this;
+    }
+}
+exports.Form = Form;
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const lodash_1 = __webpack_require__(0);
+const interfaces_1 = __webpack_require__(1);
+const state_1 = __webpack_require__(6);
+class FSM extends interfaces_1.ValidableObject {
+    has(id) {
+        return this.states.has(id);
+    }
+    length() {
+        return this.states.size;
+    }
+    get(id) {
+        return this.states.get(id);
+    }
+    all() {
+        return this.states.values();
+    }
+    add(state) {
+        if (!this.has(state.id)) {
+            this.states.set(state.id, state);
+        }
+    }
+    remove(state) {
+        this.states.delete(state.id);
+    }
+    hasField(field) {
+        for (let s of this.states.values()) {
+            if (s.hasField(field)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    addField(field) {
+        this.states.forEach((v) => v.addField(field));
+    }
+    removeField(field) {
+        this.states.forEach((v) => v.removeField(field));
+    }
+    statesFor(field) {
+        let res = new Array();
+        for (let s of this.states.values()) {
+            if (s.hasField(field)) {
+                res.push(s);
+            }
+        }
+        return res;
+    }
+    hasChildErrors() {
+        for (let child of this.states.values()) {
+            if (child.hasErrors()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    setErrors(obj) {
+        super.setErrors(obj);
+        if (lodash_1.has(obj, 'states.items')) {
+            let items = obj.states.items;
+            lodash_1.each(items, (v, k) => {
+                let id = lodash_1.toSafeInteger(k);
+                if (this.has(id)) {
+                    this.get(id).setErrors(v);
+                }
+            });
+        }
+    }
+    serialize() {
+        let tmp = {};
+        this.states.forEach((s, id) => tmp[`${id}`] = s.serialize());
+        return Object.assign({}, super.serialize(), { initial: this.initial.id, states: tmp });
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        this.states = new Map();
+        if (lodash_1.isObject(obj.states)) {
+            lodash_1.each(obj.states, (v, k) => {
+                let id = lodash_1.toSafeInteger(k);
+                this.states.set(id, new state_1.State(id).deserialize(v));
+            });
+            this.initial = this.states.get(lodash_1.toSafeInteger(obj.initial));
+        }
+        return this;
+    }
+}
+exports.FSM = FSM;
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__(9));
+__export(__webpack_require__(1));
+__export(__webpack_require__(10));
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const lodash_1 = __webpack_require__(0);
+class ValidationError {
+    serialize() {
+        return {
+            code: this.code,
+            data: this.data,
+        };
+    }
+    deserialize(obj) {
+        this.code = obj.code;
+        this.data = obj.data;
+        return this;
+    }
+}
+exports.ValidationError = ValidationError;
+class ValidationList {
+    constructor() {
+        this.errors = new Array();
+    }
+    hasErrors() {
+        return this.errors.length > 0;
+    }
+    setErrors(obj) {
+        this._extract(obj);
+    }
+    first() {
+        if (this.hasErrors()) {
+            return this.errors[0];
+        }
+    }
+    serialize() {
+        let res = [];
+        for (let e of this.errors) {
+            res.push(e.serialize());
+        }
+        return res;
+    }
+    deserialize(obj) {
+        return this._extract(obj);
+    }
+    _extract(obj) {
+        this.errors = new Array();
+        if (lodash_1.isArray(obj)) {
+            lodash_1.each(obj, (e) => this.errors.push(new ValidationError().deserialize(e)));
+        }
+        return this;
+    }
+}
+exports.ValidationList = ValidationList;
+class ValidableObject {
+    constructor() {
+        this.errors = new Map();
+    }
+    hasErrors() {
+        return this.errors.size > 0;
+    }
+    hasChildErrors() {
+        return false;
+    }
+    setErrors(obj) {
+        this._extract(obj);
+    }
+    serialize() {
+        let res = {};
+        this.errors.forEach((e, id) => res[`${id}`] = e.serialize());
+        if (lodash_1.isEmpty(res)) {
+            return {};
+        }
+        return { errors: res };
+    }
+    deserialize(obj) {
+        if (!lodash_1.isEmpty(obj)) {
+            this._extract(obj.errors);
+        }
+        return this;
+    }
+    _extract(obj) {
+        this.errors = new Map();
+        if (lodash_1.isObject(obj)) {
+            lodash_1.each(obj, (v, k) => {
+                let id = lodash_1.toSafeInteger(k);
+                let l = new ValidationList().deserialize(v);
+                if (l.hasErrors()) {
+                    this.errors.set(k, l);
+                }
+            });
+        }
+        return this;
+    }
+}
+exports.ValidableObject = ValidableObject;
+
+
+/***/ })
+/******/ ]);

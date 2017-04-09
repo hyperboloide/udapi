@@ -3,6 +3,7 @@ import { isEmpty, toSafeInteger, isObject, each, isNumber } from 'lodash';
 import { Field, extract } from '.';
 import { Display } from '../display';
 import { ValidableObject } from '../../interfaces';
+import { FieldContainer } from '.';
 
 
 export class EmbeddedOptions extends ValidableObject {
@@ -31,7 +32,7 @@ export class EmbeddedOptions extends ValidableObject {
   }
 }
 
-export class Embedded extends Field {
+export class Embedded extends Field implements FieldContainer {
 
   fields: Map<number, Field> = new Map();
   display: Display = new Display();
@@ -49,8 +50,27 @@ export class Embedded extends Field {
     return this.fields.has(id);
   }
 
+  hasFieldsOfType(t: string): boolean {
+    for (let [id, field] of this.fields) {
+      if (field.type() == t) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   getField(id: number): Field {
     return this.fields.get(id);
+  }
+
+  getFieldsOfType(t: string): Array<Field> {
+    let res = new Array<Field>();
+    for (let [id, field] of this.fields) {
+      if (field.type() == t) {
+        res.push(field);
+      }
+    }
+    return res;
   }
 
   serialize(): any {

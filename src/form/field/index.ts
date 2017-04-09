@@ -4,6 +4,23 @@ import  { Field } from "./field";
 import  { Boolean } from "./boolean";
 import  { Embedded } from "./embedded";
 
+
+export {
+  Field,
+  Boolean,
+  Embedded,
+}
+
+export interface FieldContainer {
+  fields: Map<number, Field>;
+
+  isEmpty(): boolean;
+  hasField(id: number): boolean;
+  hasFieldsOfType(t: string): boolean;
+  getField(id: number): Field;
+  getFieldsOfType(t: string): Array<Field>;
+}
+
 export function create(id: number, type: string): Field {
   switch(type) {
     case "boolean":
@@ -24,11 +41,4 @@ export function extract(id: number, obj: any): Field {
     res.deserialize(obj);
   }
   return res
-}
-
-export {
-  Field,
-
-  Boolean,
-  Embedded,
 }
