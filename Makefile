@@ -21,4 +21,13 @@ doc:
 		--hideGenerator \
 		--out $(DOC) $(SRC)
 
+patch:
+	npm version patch
+
+minor:
+	npm version minor
+
+major:
+	npm version major
+
 .PHONY: all webpack babel uglifyjs clean doc
