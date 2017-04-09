@@ -2,12 +2,15 @@ import { isBoolean, isEmpty, isString } from 'lodash';
 
 import { Field } from './field';
 
+
+export const BooleanType = "boolean";
+
 export class Boolean extends Field {
   label: string;
   default: boolean;
 
   type(): string {
-    return "boolean";
+    return BooleanType;
   }
 
   serialize(): any {

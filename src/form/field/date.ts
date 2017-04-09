@@ -2,11 +2,14 @@ import { isEmpty, isDate } from 'lodash';
 
 import { Field } from './field';
 
+
+export const DateFieldType = "date";
+
 export class DateField extends Field {
   default: Date;
 
   type(): string {
-    return "date";
+    return DateFieldType;
   }
 
   serialize(): any {

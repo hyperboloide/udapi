@@ -32,6 +32,8 @@ export class EmbeddedOptions extends ValidableObject {
   }
 }
 
+export const EmbeddedType = "embedded";
+
 export class Embedded extends Field implements FieldContainer {
 
   fields: Map<number, Field> = new Map();
@@ -39,7 +41,7 @@ export class Embedded extends Field implements FieldContainer {
   options: EmbeddedOptions = new EmbeddedOptions();
 
   type(): string {
-    return "embedded";
+    return EmbeddedType;
   }
 
   isEmpty(): boolean {

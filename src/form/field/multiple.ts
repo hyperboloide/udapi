@@ -2,12 +2,15 @@ import { isEmpty, toSafeInteger } from 'lodash';
 
 import { ChoiceField, ChoiceValue } from './choice';
 
+
+export const MultipleType = "multiple";
+
 export class Multiple extends ChoiceField {
 
   default: Array<number> = new Array();
 
   type(): string {
-    return "multiple";
+    return MultipleType;
   }
 
   removeValue(v: ChoiceValue) {

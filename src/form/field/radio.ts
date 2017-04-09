@@ -1,13 +1,38 @@
-import { isNil, toSafeInteger, isEmpty } from 'lodash';
+import { isNil, toSafeInteger, isEmpty, isString } from 'lodash';
 
 import { ChoiceField, ChoiceValue } from './choice';
+import { ValidableObject } from '../../interfaces';
+
+
+export class RadioOptions extends ValidableObject {
+  display: string = 'list';
+
+  serialize():any {
+    return {
+      ...super.serialize(),
+      display: this.display,
+    };
+  }
+
+  deserialize(obj: any): RadioOptions {
+    super.deserialize(obj);
+    this.display = 'list';
+    if (!isNil(obj) && isString(obj.display)) {
+      this.display = obj.display;
+    }
+    return this;
+  }
+}
+
+export const RadioType = "radio";
 
 export class Radio extends ChoiceField {
 
+  options: RadioOptions = new RadioOptions();
   default: number;
 
   type(): string {
-    return "radio";
+    return RadioType;
   }
 
   removeValue(v: ChoiceValue) {
@@ -37,11 +62,13 @@ export class Radio extends ChoiceField {
     if (!isNil(this.default)) {
       res['default'] = this.default;
     }
+    res['options'] = this.options.serialize();
     return res;
   }
 
   deserialize(obj: any): Radio {
     super.deserialize(obj);
+    this.options = new RadioOptions().deserialize(obj.options);
     if (!isNil(obj.default)) {
       this.default = toSafeInteger(obj.default);
     }

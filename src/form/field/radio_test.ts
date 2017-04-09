@@ -2,8 +2,10 @@ import { expect } from 'chai';
 import { isEqual, isEmpty, isNil } from 'lodash';
 
 import { Field } from './field';
-import { Radio } from './radio';
+import { Radio, RadioOptions } from './radio';
 import { ChoiceValue } from './choice';
+
+export const exampleRadioOptions = {display: 'select'};
 
 export const exampleRadio = {
   name: "example",
@@ -17,14 +19,31 @@ export const exampleRadio = {
     {id: 4, label:"value 4"},
   ],
   default: 2,
+  options: {
+    display: 'select'
+  }
 }
 
 describe('field radio', () => {
+
+  describe('RadioOptions', () => {
+    it('should deserialize', () => {
+      let ro = new RadioOptions().deserialize(exampleRadioOptions);
+      expect(ro.display).to.equal("select");
+    });
+
+    it('should serialize', () => {
+      let ro = new RadioOptions().deserialize(exampleRadioOptions);
+      let obj = ro.serialize();
+      expect(isEqual(obj, exampleRadioOptions)).to.equal(true);
+    });
+  })
 
   it('should deserialize', () => {
     let f = new Radio(42).deserialize(exampleRadio);
     expect(f.type()).to.equal("radio");
     expect(f.default).to.equal(2);
+    expect(f.options.display).to.equal('select');
   });
 
   it('should serialize', () => {
@@ -60,36 +79,5 @@ describe('field radio', () => {
     f.setDefault(v)
     expect(f.isDefault(v)).to.equal(true);
   });
-
-
-
-  // it('should removeValue', () => {
-  //   let f = new Multiple(42).deserialize(exampleMultiple);
-  //   let v = f.getValue(2);
-  //   expect(f.isDefault(v)).to.equal(true);
-  //
-  //   f.removeValue(v);
-  //   expect(f.isDefault(v)).to.equal(false);
-  //   expect(isEmpty(f.getValue(2))).to.equal(true);
-  // });
-  //
-  // it('should isDefault', () => {
-  //   let f = new Multiple(42).deserialize(exampleMultiple);
-  //
-  //   expect(f.isDefault(f.getValue(1))).to.equal(false);
-  //   expect(f.isDefault(f.getValue(2))).to.equal(true);
-  // });
-  //
-  // it('should toggleDefault', () => {
-  //   let f = new Multiple(42).deserialize(exampleMultiple);
-  //   let v = f.getValue(1);
-  //
-  //   expect(f.isDefault(v)).to.equal(false);
-  //   f.toggleDefault(v);
-  //   expect(f.isDefault(v)).to.equal(true);
-  //   f.toggleDefault(v);
-  //   expect(f.isDefault(v)).to.equal(false);
-  // });
-
 
 });
