@@ -210,8 +210,12 @@ function create(id, type) {
     switch (type) {
         case "boolean":
             return new boolean_1.Boolean(id);
+        case "date":
+            return new date_1.DateField(id);
         case "embedded":
             return new embedded_1.Embedded(id);
+        case "File":
+            return new file_1.File(id);
         default:
             return null;
     }
@@ -434,7 +438,7 @@ class DateField extends field_1.Field {
     }
     serialize() {
         let res = super.serialize();
-        if (!lodash_1.isEmpty(this.default)) {
+        if (lodash_1.isDate(this.default)) {
             res['default'] = this.default.toJSON();
         }
         return res;
