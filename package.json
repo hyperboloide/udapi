@@ -1,6 +1,6 @@
 {
   "name": "ud.api_ts",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Usine Data Type script api client library",
   "author": "hyperboloide",
   "main": "bundle.js",
