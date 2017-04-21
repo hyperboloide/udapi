@@ -18,6 +18,15 @@ export const exampleEmbedded = {
       name: "boolean embedded field",
       mandatory: true,
       type: "boolean",
+    },
+    "2": {
+      name: "text embedded field",
+      mandatory: true,
+      type: "text",
+      options: {
+        rows: 5,
+        textarea: true,
+      }
     }
   }
 }
@@ -47,6 +56,7 @@ describe('field embedded', () => {
   it('should serialize', () => {
     let f = new Embedded(42).deserialize(exampleEmbedded);
     let obj = f.serialize();
+    
     expect(isEqual(obj, exampleEmbedded)).to.equal(true);
   });
 
@@ -58,7 +68,8 @@ describe('field embedded', () => {
   it('should hasField', () => {
     let f = new Embedded(42).deserialize(exampleEmbedded);
     expect(f.hasField(1)).to.equal(true);
-    expect(f.hasField(2)).to.equal(false);
+    expect(f.hasField(2)).to.equal(true);
+    expect(f.hasField(3)).to.equal(false);
   });
 
   it('should hasFieldsOfType', () => {
@@ -70,7 +81,7 @@ describe('field embedded', () => {
   it('should getField', () => {
     let f = new Embedded(42).deserialize(exampleEmbedded);
     expect(f.getField(1).type()).to.equal("boolean");
-    expect(isEmpty(f.getField(2))).to.equal(true);
+    expect(isEmpty(f.getField(3))).to.equal(true);
   });
 
   it('should getFieldsOfType', () => {
@@ -79,5 +90,27 @@ describe('field embedded', () => {
     expect(f.getFieldsOfType("boolean")[0].id).to.equal(1);
     expect(f.getFieldsOfType("reference").length).to.equal(0);
   });
+
+  // it('should hasChildErrors', () => {
+  //   let f = new Embedded(42).deserialize(exampleEmbedded);
+  //   expect(f.hasChildErrors()).to.equal(false);
+  //
+  //   let error = {
+  //     fields: {
+  //       items: {
+  //         "2": {
+  //           options: {
+  //             rows: [
+  //               {code: "some.error", data: {toto: 42}}
+  //             ]
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  //   f.setErrors(error);
+  //   console.log(f)
+  //   expect(f.hasChildErrors()).to.equal(true);
+  // });
 
 });

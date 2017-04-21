@@ -6,8 +6,8 @@ import { Field } from '../field';
 export class State extends ValidableObject {
   readonly id: number;
   name: string;
-  fields: Array<number>;
-  nexts: Array<number>;
+  fields: Array<number> = new Array();
+  nexts: Array<number> = new Array();
 
   constructor(id: number) {
     super();

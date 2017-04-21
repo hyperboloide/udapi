@@ -1,4 +1,4 @@
-import { isEmpty, toSafeInteger, isObject, each, isNumber } from 'lodash';
+import { isEmpty, toSafeInteger, isObject, each, isNumber, has } from 'lodash';
 
 import { Field, extract } from '.';
 import { Display } from '../display';
@@ -73,6 +73,28 @@ export class Embedded extends Field implements FieldContainer {
       }
     }
     return res;
+  }
+
+  hasChildErrors(): boolean {
+    for (let child of this.fields.values()) {
+      if (child.hasErrors()) {
+          return true;
+        }
+    }
+    return false;
+  }
+
+  setErrors(obj: any) {
+    super.setErrors(obj);
+    if (has(obj, 'fields.items')) {
+      let items = obj.fields.items;
+      each(items, (v, k) => {
+        let id = toSafeInteger(k)
+        if (this.hasField(id)) {
+          this.getField(id).setErrors(v);
+        }
+      });
+    }
   }
 
   serialize(): any {

@@ -7,7 +7,8 @@ module.exports = {
     path: __dirname
   },
   externals: {
-    "lodash": true
+    "lodash": true,
+    "axios": true,
   },
   resolve: {
     extensions: ['.ts']

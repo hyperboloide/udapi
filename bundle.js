@@ -117,7 +117,9 @@ class Field extends interfaces_1.ValidableObject {
             return this;
         }
         this.name = obj.name;
-        this.help = obj.help;
+        if (!lodash_1.isEmpty(obj.help)) {
+            this.help = obj.help;
+        }
         if (lodash_1.isBoolean(obj.mandatory)) {
             this.mandatory = obj.mandatory;
         }
@@ -364,6 +366,8 @@ const interfaces_1 = __webpack_require__(1);
 class State extends interfaces_1.ValidableObject {
     constructor(id) {
         super();
+        this.fields = new Array();
+        this.nexts = new Array();
         this.id = id;
     }
     hasField(field) {
@@ -475,6 +479,22 @@ __export(__webpack_require__(6));
 __export(__webpack_require__(3));
 __export(__webpack_require__(21));
 __export(__webpack_require__(8));
+exports.url = "/forms";
+// 
+// export function Insert(s: Session, form: Form) Promise<Form> {
+//
+//   return new Promise<Form>((resolve, reject) => {
+//     s.post(form.serialize(), '/forms').then(
+//       (resp) => {
+//         new Form().deserialize(resp.data.data)
+//
+//       },
+//       (resp) => {
+//
+//       }
+//     )
+//   })
+// }
 
 
 /***/ }),
@@ -630,6 +650,26 @@ class Embedded extends _1.Field {
             }
         }
         return res;
+    }
+    hasChildErrors() {
+        for (let child of this.fields.values()) {
+            if (child.hasErrors()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    setErrors(obj) {
+        super.setErrors(obj);
+        if (lodash_1.has(obj, 'fields.items')) {
+            let items = obj.fields.items;
+            lodash_1.each(items, (v, k) => {
+                let id = lodash_1.toSafeInteger(k);
+                if (this.hasField(id)) {
+                    this.getField(id).setErrors(v);
+                }
+            });
+        }
     }
     serialize() {
         let fields = {};
@@ -973,6 +1013,7 @@ class Form extends interfaces_1.ValidableObject {
         this.fields = new Map();
         this.sections = new Map();
         this.display = new display_1.Display();
+        this.fsm = new fsm_1.FSM();
         this._nextid = 0;
     }
     nextid() {
@@ -1011,22 +1052,25 @@ class Form extends interfaces_1.ValidableObject {
         }
         return false;
     }
-    createField(type, name = '') {
+    addField(type, name = '', state) {
         let f = field_1.create(this.nextid(), type);
-        return f;
-    }
-    addField(type, name = '') {
-        let f = this.createField(type, name);
+        f.name = name;
         this.fields.set(f.id, f);
         this.display.add(f);
-        this.fsm.addField(f);
+        if (lodash_1.isNil(state)) {
+            this.fsm.addField(f);
+        }
+        else {
+            state.addField(f);
+        }
         return f;
     }
     addEmbeddedField(emb, type, name = '') {
         if (!this.hasField(emb.id)) {
             return;
         }
-        let f = this.createField(type, name);
+        let f = field_1.create(this.nextid(), type);
+        f.name = name;
         emb.fields.set(f.id, f);
         emb.display.add(f);
         this.fsm.addField(f);
@@ -1092,12 +1136,18 @@ class Form extends interfaces_1.ValidableObject {
         this.sections.delete(s.id);
         this.display.remove(s);
     }
+    addState(name) {
+        let s = new fsm_1.State(this.nextid());
+        s.name = name;
+        this.fsm.add(s);
+        return s;
+    }
     serialize() {
         let fields = {};
         this.fields.forEach((f, id) => fields[`${id}`] = f.serialize());
         let sections = {};
         this.sections.forEach((s, id) => sections[`${id}`] = s.serialize());
-        return Object.assign({}, super.serialize(), { url: this.url, owner: this.owner.serialize(), created: this.created.toJSON(), updated: this.updated.toJSON(), proto: this.proto, version: this.version, states: this.states, name: this.name, description: this.description, fields: fields, sections: sections, display: this.display.serialize(), fsm: this.fsm.serialize(), nextid: this._nextid });
+        return lodash_1.omitBy(Object.assign({}, super.serialize(), { url: this.url, owner: this.owner ? this.owner.serialize() : null, created: this.created ? this.created.toJSON() : null, updated: this.updated ? this.updated.toJSON() : null, proto: this.proto, version: this.version, states: this.states, name: this.name, description: this.description, fields: fields, sections: sections, display: this.display.serialize(), fsm: this.fsm.serialize(), nextid: this._nextid }), lodash_1.isNil);
     }
     deserialize(obj) {
         super.deserialize(obj);
@@ -1108,17 +1158,19 @@ class Form extends interfaces_1.ValidableObject {
         if (lodash_1.isObject(obj.owner)) {
             this.owner = new user_1.User().deserialize(obj.owner);
         }
-        if (!lodash_1.isEmpty('created')) {
+        if (!lodash_1.isNil(obj.created)) {
             this.created = new Date(obj.created);
         }
-        if (!lodash_1.isEmpty('updated')) {
+        if (!lodash_1.isNil(obj.updated)) {
             this.updated = new Date(obj.updated);
         }
         this.proto = obj.proto;
         this.version = obj.version;
         this.states = obj.states;
         this.name = obj.name;
-        this.description = obj.description;
+        if (!lodash_1.isNil(obj.description)) {
+            this.description = obj.description;
+        }
         this.fields = new Map();
         lodash_1.each(obj.fields, (v, k) => {
             let id = lodash_1.toSafeInteger(k);
@@ -1151,6 +1203,10 @@ const lodash_1 = __webpack_require__(0);
 const interfaces_1 = __webpack_require__(1);
 const state_1 = __webpack_require__(7);
 class FSM extends interfaces_1.ValidableObject {
+    constructor() {
+        super(...arguments);
+        this.states = new Map();
+    }
     has(id) {
         return this.states.has(id);
     }
@@ -1166,6 +1222,9 @@ class FSM extends interfaces_1.ValidableObject {
     add(state) {
         if (!this.has(state.id)) {
             this.states.set(state.id, state);
+            if (lodash_1.isNil(this.initial)) {
+                this.initial = state;
+            }
         }
     }
     remove(state) {
