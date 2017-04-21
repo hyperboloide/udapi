@@ -1,8 +1,15 @@
 
-// export interface HTTPAPIResponse<T> {
-//   errors?: any;
-//   data?: T;
-// }
+export type HTTPAPITransformer<T> = (obj: any) => T;
+
+export interface HTTPAPIResponse<T> {
+  errors?: any;
+  data?: T;
+}
+
+export interface HTTPAPIDownloadResponse<T> {
+  errors?: any;
+  data?: T;
+}
 
 export interface HTTPTransformer {
   (data: any): any
@@ -20,24 +27,18 @@ export interface HTTPConfig {
   responseType?: string;
 }
 
-export interface HTTPResponse {
-  data: HTTPAPIResponse;
+export interface HTTPResponse<T> {
+  data: HTTPAPIResponse<T>;
   status: number;
   statusText: string;
   headers: any;
   config: HTTPConfig;
 }
 
-export interface HTTPError extends Error {
-  config: HTTPConfig;
-  code?: string;
-  response?: HTTPResponse;
-}
-
-export interface HTTPPromise extends Promise<HTTPResponse> {
+export interface HTTPPromise<T> extends Promise<HTTPResponse<T>> {
 }
 
 export interface HTTPClient {
   defaults: HTTPConfig;
-  request(config: HTTPConfig): HTTPPromise;
+  request<T>(config: HTTPConfig): HTTPPromise<T>;
 }

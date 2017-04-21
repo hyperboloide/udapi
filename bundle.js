@@ -64,7 +64,7 @@ exports["udApi"] =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 23);
+/******/ 	return __webpack_require__(__webpack_require__.s = 24);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -84,7 +84,7 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 ;
-__export(__webpack_require__(24));
+__export(__webpack_require__(25));
 
 
 /***/ }),
@@ -274,31 +274,31 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const lodash_1 = __webpack_require__(0);
 const field_1 = __webpack_require__(2);
 exports.Field = field_1.Field;
-const boolean_1 = __webpack_require__(12);
+const boolean_1 = __webpack_require__(14);
 exports.Boolean = boolean_1.Boolean;
 exports.BooleanType = boolean_1.BooleanType;
-const date_1 = __webpack_require__(13);
+const date_1 = __webpack_require__(15);
 exports.DateField = date_1.DateField;
 exports.DateFieldType = date_1.DateFieldType;
-const embedded_1 = __webpack_require__(14);
+const embedded_1 = __webpack_require__(16);
 exports.Embedded = embedded_1.Embedded;
 exports.EmbeddedType = embedded_1.EmbeddedType;
-const file_1 = __webpack_require__(15);
+const file_1 = __webpack_require__(17);
 exports.File = file_1.File;
 exports.FileType = file_1.FileType;
-const multiple_1 = __webpack_require__(16);
+const multiple_1 = __webpack_require__(18);
 exports.Multiple = multiple_1.Multiple;
 exports.MultipleType = multiple_1.MultipleType;
-const number_1 = __webpack_require__(17);
+const number_1 = __webpack_require__(19);
 exports.Number = number_1.Number;
 exports.NumberType = number_1.NumberType;
-const radio_1 = __webpack_require__(18);
+const radio_1 = __webpack_require__(20);
 exports.Radio = radio_1.Radio;
 exports.RadioType = radio_1.RadioType;
-const reference_1 = __webpack_require__(19);
+const reference_1 = __webpack_require__(21);
 exports.Reference = reference_1.Reference;
 exports.ReferenceType = reference_1.ReferenceType;
-const text_1 = __webpack_require__(20);
+const text_1 = __webpack_require__(22);
 exports.Text = text_1.Text;
 exports.TextType = text_1.TextType;
 __export(__webpack_require__(4));
@@ -350,8 +350,33 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(22));
+__export(__webpack_require__(5));
+__export(__webpack_require__(8));
+__export(__webpack_require__(3));
 __export(__webpack_require__(7));
+__export(__webpack_require__(10));
+__export(__webpack_require__(11));
+const managed_1 = __webpack_require__(10);
+exports.url = "/forms";
+function Get(s, formUrl) {
+    let tr = (obj) => new managed_1.EditableForm(s).deserialize(obj);
+    return s.GET(tr, exports.url, '/', formUrl);
+}
+exports.Get = Get;
+function Insert(s, form) {
+    let tr = (obj) => new managed_1.EditableForm(s).deserialize(obj);
+    return s.POST(tr, form.serialize(), exports.url);
+}
+exports.Insert = Insert;
+function Update(s, form) {
+    let tr = (obj) => new managed_1.EditableForm(s).deserialize(obj);
+    return s.PUT(tr, form.serialize(), exports.url, '/', form.url);
+}
+exports.Update = Update;
+function Remove(s, formUrl) {
+    return s.DELETE(exports.url, '/', formUrl);
+}
+exports.Remove = Remove;
 
 
 /***/ }),
@@ -363,643 +388,10 @@ __export(__webpack_require__(7));
 Object.defineProperty(exports, "__esModule", { value: true });
 const lodash_1 = __webpack_require__(0);
 const interfaces_1 = __webpack_require__(1);
-class State extends interfaces_1.ValidableObject {
-    constructor(id) {
-        super();
-        this.fields = new Array();
-        this.nexts = new Array();
-        this.id = id;
-    }
-    hasField(field) {
-        return lodash_1.includes(this.fields, field.id);
-    }
-    addField(field) {
-        if (!this.hasField(field)) {
-            this.fields.push(field.id);
-        }
-    }
-    removeField(field) {
-        this.fields = lodash_1.without(this.fields, field.id);
-    }
-    hasNext(state) {
-        return lodash_1.includes(this.nexts, state.id);
-    }
-    addNext(state) {
-        if (!this.hasNext(state)) {
-            this.nexts.push(state.id);
-        }
-    }
-    removeNext(state) {
-        this.nexts = lodash_1.without(this.nexts, state.id);
-    }
-    isTerminal() {
-        return this.nexts.length == 0;
-    }
-    serialize() {
-        return Object.assign({}, super.serialize(), { name: this.name, fields: this.fields, nexts: this.nexts });
-    }
-    deserialize(obj) {
-        super.deserialize(obj);
-        if (lodash_1.isObject(obj)) {
-            this.name = obj.name;
-            this.fields = obj.fields;
-            this.nexts = obj.nexts;
-        }
-        return this;
-    }
-}
-exports.State = State;
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const interfaces_1 = __webpack_require__(1);
-class Section extends interfaces_1.ValidableObject {
-    constructor(id) {
-        super();
-        this.id = id;
-    }
-    serialize() {
-        return Object.assign({}, super.serialize(), { html: this.html });
-    }
-    deserialize(obj) {
-        super.deserialize(obj);
-        this.html = obj.html;
-        return this;
-    }
-}
-exports.Section = Section;
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-class User {
-    equal(u) {
-        return u.id == this.id;
-    }
-    serialize() {
-        return {
-            id: this.id,
-            name: this.name,
-            picture: this.picture,
-        };
-    }
-    deserialize(obj) {
-        this.id = obj.id;
-        this.name = obj.name;
-        this.picture = obj.picture;
-        return this;
-    }
-}
-exports.User = User;
-
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(5));
-__export(__webpack_require__(6));
-__export(__webpack_require__(3));
-__export(__webpack_require__(21));
-__export(__webpack_require__(8));
-exports.url = "/forms";
-// 
-// export function Insert(s: Session, form: Form) Promise<Form> {
-//
-//   return new Promise<Form>((resolve, reject) => {
-//     s.post(form.serialize(), '/forms').then(
-//       (resp) => {
-//         new Form().deserialize(resp.data.data)
-//
-//       },
-//       (resp) => {
-//
-//       }
-//     )
-//   })
-// }
-
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(9));
-
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const lodash_1 = __webpack_require__(0);
-const field_1 = __webpack_require__(2);
-exports.BooleanType = "boolean";
-class Boolean extends field_1.Field {
-    type() {
-        return exports.BooleanType;
-    }
-    serialize() {
-        let res = super.serialize();
-        if (!lodash_1.isEmpty(this.label)) {
-            res['label'] = this.label;
-        }
-        if (lodash_1.isBoolean(this.default)) {
-            res['default'] = this.default;
-        }
-        return res;
-    }
-    deserialize(obj) {
-        super.deserialize(obj);
-        if (!lodash_1.isEmpty(obj.label) && lodash_1.isString(obj.label)) {
-            this.label = obj.label;
-        }
-        if (lodash_1.isBoolean(obj.default)) {
-            this.default = obj.default;
-        }
-        return this;
-    }
-}
-exports.Boolean = Boolean;
-
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const lodash_1 = __webpack_require__(0);
-const field_1 = __webpack_require__(2);
-exports.DateFieldType = "date";
-class DateField extends field_1.Field {
-    type() {
-        return exports.DateFieldType;
-    }
-    serialize() {
-        let res = super.serialize();
-        if (lodash_1.isDate(this.default)) {
-            res['default'] = this.default.toJSON();
-        }
-        return res;
-    }
-    deserialize(obj) {
-        super.deserialize(obj);
-        if (!lodash_1.isEmpty(obj.default)) {
-            this.default = new Date(obj.default);
-        }
-        return this;
-    }
-}
-exports.DateField = DateField;
-
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const lodash_1 = __webpack_require__(0);
-const _1 = __webpack_require__(5);
-const display_1 = __webpack_require__(3);
-const interfaces_1 = __webpack_require__(1);
-class EmbeddedOptions extends interfaces_1.ValidableObject {
-    constructor() {
-        super(...arguments);
-        this.max = 99;
-        this.min = 1;
-    }
-    serialize() {
-        return Object.assign({}, super.serialize(), { min: this.min, max: this.max });
-    }
-    deserialize(obj) {
-        super.deserialize(obj);
-        if (lodash_1.isObject(obj)) {
-            if (lodash_1.isNumber(obj.min)) {
-                this.min = lodash_1.toSafeInteger(obj.min);
-            }
-            if (lodash_1.isNumber(obj.max)) {
-                this.max = lodash_1.toSafeInteger(obj.max);
-            }
-        }
-        return this;
-    }
-}
-exports.EmbeddedOptions = EmbeddedOptions;
-exports.EmbeddedType = "embedded";
-class Embedded extends _1.Field {
-    constructor() {
-        super(...arguments);
-        this.fields = new Map();
-        this.display = new display_1.Display();
-        this.options = new EmbeddedOptions();
-    }
-    type() {
-        return exports.EmbeddedType;
-    }
-    isEmpty() {
-        return this.fields.size == 0;
-    }
-    hasField(id) {
-        return this.fields.has(id);
-    }
-    hasFieldsOfType(t) {
-        for (let [id, field] of this.fields) {
-            if (field.type() == t) {
-                return true;
-            }
-        }
-        return false;
-    }
-    getField(id) {
-        return this.fields.get(id);
-    }
-    getFieldsOfType(t) {
-        let res = new Array();
-        for (let [id, field] of this.fields) {
-            if (field.type() == t) {
-                res.push(field);
-            }
-        }
-        return res;
-    }
-    hasChildErrors() {
-        for (let child of this.fields.values()) {
-            if (child.hasErrors()) {
-                return true;
-            }
-        }
-        return false;
-    }
-    setErrors(obj) {
-        super.setErrors(obj);
-        if (lodash_1.has(obj, 'fields.items')) {
-            let items = obj.fields.items;
-            lodash_1.each(items, (v, k) => {
-                let id = lodash_1.toSafeInteger(k);
-                if (this.hasField(id)) {
-                    this.getField(id).setErrors(v);
-                }
-            });
-        }
-    }
-    serialize() {
-        let fields = {};
-        this.fields.forEach((f, id) => fields[`${id}`] = f.serialize());
-        return Object.assign({}, super.serialize(), { options: this.options.serialize(), fields: fields, display: this.display.serialize() });
-    }
-    deserialize(obj) {
-        super.deserialize(obj);
-        this.fields = new Map();
-        lodash_1.each(obj.fields, (v, k) => {
-            let id = lodash_1.toSafeInteger(k);
-            this.fields.set(id, _1.extract(id, v));
-        });
-        this.display = new display_1.Display().deserialize(obj.display);
-        this.options = new EmbeddedOptions().deserialize(obj.options);
-        return this;
-    }
-}
-exports.Embedded = Embedded;
-
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const field_1 = __webpack_require__(2);
-exports.FileType = "file";
-class File extends field_1.Field {
-    type() {
-        return exports.FileType;
-    }
-}
-exports.File = File;
-
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const lodash_1 = __webpack_require__(0);
-const choice_1 = __webpack_require__(4);
-exports.MultipleType = "multiple";
-class Multiple extends choice_1.ChoiceField {
-    constructor() {
-        super(...arguments);
-        this.default = new Array();
-    }
-    type() {
-        return exports.MultipleType;
-    }
-    removeValue(v) {
-        super.removeValue(v);
-        if (this.isDefault(v)) {
-            this.toggleDefault(v);
-        }
-    }
-    isDefault(v) {
-        return this.default.indexOf(v.id) != -1;
-    }
-    toggleDefault(v) {
-        let idx = this.default.indexOf(v.id);
-        if (idx != -1) {
-            this.default.splice(idx, 1);
-        }
-        else {
-            this.default.push(v.id);
-        }
-    }
-    serialize() {
-        let res = super.serialize();
-        if (!lodash_1.isEmpty(this.default)) {
-            res['default'] = this.default;
-        }
-        return res;
-    }
-    deserialize(obj) {
-        super.deserialize(obj);
-        if (!lodash_1.isEmpty(obj.default)) {
-            this.default = new Array();
-            for (let id of obj.default) {
-                this.default.push(lodash_1.toSafeInteger(id));
-            }
-        }
-        return this;
-    }
-}
-exports.Multiple = Multiple;
-
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const lodash_1 = __webpack_require__(0);
-const field_1 = __webpack_require__(2);
-const interfaces_1 = __webpack_require__(1);
-class NumberOptions extends interfaces_1.ValidableObject {
-    constructor() {
-        super(...arguments);
-        this.integer = false;
-    }
-    serialize() {
-        return Object.assign({}, super.serialize(), { integer: this.integer });
-    }
-    deserialize(obj) {
-        super.deserialize(obj);
-        this.integer = false;
-        if (lodash_1.isBoolean(obj.integer)) {
-            this.integer = obj.integer;
-        }
-        return this;
-    }
-}
-exports.NumberOptions = NumberOptions;
-exports.NumberType = "number";
-class Number extends field_1.Field {
-    constructor() {
-        super(...arguments);
-        this.options = new NumberOptions();
-    }
-    type() {
-        return exports.NumberType;
-    }
-    serialize() {
-        let res = Object.assign({}, super.serialize(), { options: this.options.serialize() });
-        if (!lodash_1.isNil(this.default)) {
-            res['default'] = this.default;
-        }
-        return res;
-    }
-    deserialize(obj) {
-        super.deserialize(obj);
-        if (!lodash_1.isEmpty(obj.options)) {
-            this.options = new NumberOptions().deserialize(obj.options);
-        }
-        if (lodash_1.isNumber(obj.default)) {
-            this.default = lodash_1.toNumber(obj.default);
-        }
-        return this;
-    }
-}
-exports.Number = Number;
-
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const lodash_1 = __webpack_require__(0);
-const choice_1 = __webpack_require__(4);
-const interfaces_1 = __webpack_require__(1);
-class RadioOptions extends interfaces_1.ValidableObject {
-    constructor() {
-        super(...arguments);
-        this.display = 'list';
-    }
-    serialize() {
-        return Object.assign({}, super.serialize(), { display: this.display });
-    }
-    deserialize(obj) {
-        super.deserialize(obj);
-        this.display = 'list';
-        if (!lodash_1.isNil(obj) && lodash_1.isString(obj.display)) {
-            this.display = obj.display;
-        }
-        return this;
-    }
-}
-exports.RadioOptions = RadioOptions;
-exports.RadioType = "radio";
-class Radio extends choice_1.ChoiceField {
-    constructor() {
-        super(...arguments);
-        this.options = new RadioOptions();
-    }
-    type() {
-        return exports.RadioType;
-    }
-    removeValue(v) {
-        super.removeValue(v);
-        if (this.isDefault(v)) {
-            this.setDefault(null);
-        }
-    }
-    isDefault(v) {
-        if (!lodash_1.isNil(this.default)) {
-            return this.default == v.id;
-        }
-        return false;
-    }
-    setDefault(v) {
-        if (lodash_1.isEmpty(v)) {
-            this.default = null;
-        }
-        else {
-            this.default = v.id;
-        }
-    }
-    serialize() {
-        let res = super.serialize();
-        if (!lodash_1.isNil(this.default)) {
-            res['default'] = this.default;
-        }
-        res['options'] = this.options.serialize();
-        return res;
-    }
-    deserialize(obj) {
-        super.deserialize(obj);
-        this.options = new RadioOptions().deserialize(obj.options);
-        if (!lodash_1.isNil(obj.default)) {
-            this.default = lodash_1.toSafeInteger(obj.default);
-        }
-        return this;
-    }
-}
-exports.Radio = Radio;
-
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const field_1 = __webpack_require__(2);
-exports.ReferenceType = "reference";
-class Reference extends field_1.Field {
-    type() {
-        return exports.ReferenceType;
-    }
-    serialize() {
-        return Object.assign({}, super.serialize(), { form: this.form });
-    }
-    deserialize(obj) {
-        super.deserialize(obj);
-        this.form = obj.form;
-        return this;
-    }
-}
-exports.Reference = Reference;
-
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const lodash_1 = __webpack_require__(0);
-const field_1 = __webpack_require__(2);
-const interfaces_1 = __webpack_require__(1);
-class TextOptions extends interfaces_1.ValidableObject {
-    constructor() {
-        super(...arguments);
-        this.textarea = false;
-        this.rows = 1;
-    }
-    serialize() {
-        return Object.assign({}, super.serialize(), { textarea: this.textarea, rows: this.rows });
-    }
-    deserialize(obj) {
-        super.deserialize(obj);
-        this.textarea = false;
-        if (lodash_1.isBoolean(obj.textarea)) {
-            this.textarea = obj.textarea;
-        }
-        if (lodash_1.isInteger(obj.rows)) {
-            this.rows = obj.rows;
-        }
-        return this;
-    }
-}
-exports.TextOptions = TextOptions;
-exports.TextType = "text";
-class Text extends field_1.Field {
-    constructor() {
-        super(...arguments);
-        this.options = new TextOptions();
-    }
-    type() {
-        return exports.TextType;
-    }
-    serialize() {
-        let res = Object.assign({}, super.serialize(), { options: this.options.serialize() });
-        if (!lodash_1.isEmpty(this.default)) {
-            res['default'] = this.default;
-        }
-        return res;
-    }
-    deserialize(obj) {
-        super.deserialize(obj);
-        if (!lodash_1.isEmpty(obj.options)) {
-            this.options = new TextOptions().deserialize(obj.options);
-        }
-        if (!lodash_1.isEmpty(obj.default)) {
-            this.default = obj.default;
-        }
-        return this;
-    }
-}
-exports.Text = Text;
-
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const lodash_1 = __webpack_require__(0);
-const interfaces_1 = __webpack_require__(1);
-const user_1 = __webpack_require__(9);
-const section_1 = __webpack_require__(8);
+const user_1 = __webpack_require__(12);
+const section_1 = __webpack_require__(11);
 const field_1 = __webpack_require__(5);
-const fsm_1 = __webpack_require__(6);
+const fsm_1 = __webpack_require__(8);
 const display_1 = __webpack_require__(3);
 class Form extends interfaces_1.ValidableObject {
     constructor() {
@@ -1193,7 +585,21 @@ exports.Form = Form;
 
 
 /***/ }),
-/* 22 */
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__(23));
+__export(__webpack_require__(9));
+
+
+/***/ }),
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1201,7 +607,631 @@ exports.Form = Form;
 Object.defineProperty(exports, "__esModule", { value: true });
 const lodash_1 = __webpack_require__(0);
 const interfaces_1 = __webpack_require__(1);
-const state_1 = __webpack_require__(7);
+class State extends interfaces_1.ValidableObject {
+    constructor(id) {
+        super();
+        this.fields = new Array();
+        this.nexts = new Array();
+        this.id = id;
+    }
+    hasField(field) {
+        return lodash_1.includes(this.fields, field.id);
+    }
+    addField(field) {
+        if (!this.hasField(field)) {
+            this.fields.push(field.id);
+        }
+    }
+    removeField(field) {
+        this.fields = lodash_1.without(this.fields, field.id);
+    }
+    hasNext(state) {
+        return lodash_1.includes(this.nexts, state.id);
+    }
+    addNext(state) {
+        if (!this.hasNext(state)) {
+            this.nexts.push(state.id);
+        }
+    }
+    removeNext(state) {
+        this.nexts = lodash_1.without(this.nexts, state.id);
+    }
+    isTerminal() {
+        return this.nexts.length == 0;
+    }
+    serialize() {
+        return Object.assign({}, super.serialize(), { name: this.name, fields: this.fields, nexts: this.nexts });
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        if (lodash_1.isObject(obj)) {
+            this.name = obj.name;
+            this.fields = obj.fields;
+            this.nexts = obj.nexts;
+        }
+        return this;
+    }
+}
+exports.State = State;
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const index_1 = __webpack_require__(6);
+const form_1 = __webpack_require__(7);
+class EditableForm extends form_1.Form {
+    constructor(s) {
+        super();
+        this.s = s;
+    }
+    update() {
+        return index_1.Update(this.s, this);
+    }
+    remove() {
+        return index_1.Remove(this.s, this.url);
+    }
+}
+exports.EditableForm = EditableForm;
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const interfaces_1 = __webpack_require__(1);
+class Section extends interfaces_1.ValidableObject {
+    constructor(id) {
+        super();
+        this.id = id;
+    }
+    serialize() {
+        return Object.assign({}, super.serialize(), { html: this.html });
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        this.html = obj.html;
+        return this;
+    }
+}
+exports.Section = Section;
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class User {
+    equal(u) {
+        return u.id == this.id;
+    }
+    serialize() {
+        return {
+            id: this.id,
+            name: this.name,
+            picture: this.picture,
+        };
+    }
+    deserialize(obj) {
+        this.id = obj.id;
+        this.name = obj.name;
+        this.picture = obj.picture;
+        return this;
+    }
+}
+exports.User = User;
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__(12));
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const lodash_1 = __webpack_require__(0);
+const field_1 = __webpack_require__(2);
+exports.BooleanType = "boolean";
+class Boolean extends field_1.Field {
+    type() {
+        return exports.BooleanType;
+    }
+    serialize() {
+        let res = super.serialize();
+        if (!lodash_1.isEmpty(this.label)) {
+            res['label'] = this.label;
+        }
+        if (lodash_1.isBoolean(this.default)) {
+            res['default'] = this.default;
+        }
+        return res;
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        if (!lodash_1.isEmpty(obj.label) && lodash_1.isString(obj.label)) {
+            this.label = obj.label;
+        }
+        if (lodash_1.isBoolean(obj.default)) {
+            this.default = obj.default;
+        }
+        return this;
+    }
+}
+exports.Boolean = Boolean;
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const lodash_1 = __webpack_require__(0);
+const field_1 = __webpack_require__(2);
+exports.DateFieldType = "date";
+class DateField extends field_1.Field {
+    type() {
+        return exports.DateFieldType;
+    }
+    serialize() {
+        let res = super.serialize();
+        if (lodash_1.isDate(this.default)) {
+            res['default'] = this.default.toJSON();
+        }
+        return res;
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        if (!lodash_1.isEmpty(obj.default)) {
+            this.default = new Date(obj.default);
+        }
+        return this;
+    }
+}
+exports.DateField = DateField;
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const lodash_1 = __webpack_require__(0);
+const _1 = __webpack_require__(5);
+const display_1 = __webpack_require__(3);
+const interfaces_1 = __webpack_require__(1);
+class EmbeddedOptions extends interfaces_1.ValidableObject {
+    constructor() {
+        super(...arguments);
+        this.max = 99;
+        this.min = 1;
+    }
+    serialize() {
+        return Object.assign({}, super.serialize(), { min: this.min, max: this.max });
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        if (lodash_1.isObject(obj)) {
+            if (lodash_1.isNumber(obj.min)) {
+                this.min = lodash_1.toSafeInteger(obj.min);
+            }
+            if (lodash_1.isNumber(obj.max)) {
+                this.max = lodash_1.toSafeInteger(obj.max);
+            }
+        }
+        return this;
+    }
+}
+exports.EmbeddedOptions = EmbeddedOptions;
+exports.EmbeddedType = "embedded";
+class Embedded extends _1.Field {
+    constructor() {
+        super(...arguments);
+        this.fields = new Map();
+        this.display = new display_1.Display();
+        this.options = new EmbeddedOptions();
+    }
+    type() {
+        return exports.EmbeddedType;
+    }
+    isEmpty() {
+        return this.fields.size == 0;
+    }
+    hasField(id) {
+        return this.fields.has(id);
+    }
+    hasFieldsOfType(t) {
+        for (let [id, field] of this.fields) {
+            if (field.type() == t) {
+                return true;
+            }
+        }
+        return false;
+    }
+    getField(id) {
+        return this.fields.get(id);
+    }
+    getFieldsOfType(t) {
+        let res = new Array();
+        for (let [id, field] of this.fields) {
+            if (field.type() == t) {
+                res.push(field);
+            }
+        }
+        return res;
+    }
+    hasChildErrors() {
+        for (let child of this.fields.values()) {
+            if (child.hasErrors()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    setErrors(obj) {
+        super.setErrors(obj);
+        if (lodash_1.has(obj, 'fields.items')) {
+            let items = obj.fields.items;
+            lodash_1.each(items, (v, k) => {
+                let id = lodash_1.toSafeInteger(k);
+                if (this.hasField(id)) {
+                    this.getField(id).setErrors(v);
+                }
+            });
+        }
+    }
+    serialize() {
+        let fields = {};
+        this.fields.forEach((f, id) => fields[`${id}`] = f.serialize());
+        return Object.assign({}, super.serialize(), { options: this.options.serialize(), fields: fields, display: this.display.serialize() });
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        this.fields = new Map();
+        lodash_1.each(obj.fields, (v, k) => {
+            let id = lodash_1.toSafeInteger(k);
+            this.fields.set(id, _1.extract(id, v));
+        });
+        this.display = new display_1.Display().deserialize(obj.display);
+        this.options = new EmbeddedOptions().deserialize(obj.options);
+        return this;
+    }
+}
+exports.Embedded = Embedded;
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const field_1 = __webpack_require__(2);
+exports.FileType = "file";
+class File extends field_1.Field {
+    type() {
+        return exports.FileType;
+    }
+}
+exports.File = File;
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const lodash_1 = __webpack_require__(0);
+const choice_1 = __webpack_require__(4);
+exports.MultipleType = "multiple";
+class Multiple extends choice_1.ChoiceField {
+    constructor() {
+        super(...arguments);
+        this.default = new Array();
+    }
+    type() {
+        return exports.MultipleType;
+    }
+    removeValue(v) {
+        super.removeValue(v);
+        if (this.isDefault(v)) {
+            this.toggleDefault(v);
+        }
+    }
+    isDefault(v) {
+        return this.default.indexOf(v.id) != -1;
+    }
+    toggleDefault(v) {
+        let idx = this.default.indexOf(v.id);
+        if (idx != -1) {
+            this.default.splice(idx, 1);
+        }
+        else {
+            this.default.push(v.id);
+        }
+    }
+    serialize() {
+        let res = super.serialize();
+        if (!lodash_1.isEmpty(this.default)) {
+            res['default'] = this.default;
+        }
+        return res;
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        if (!lodash_1.isEmpty(obj.default)) {
+            this.default = new Array();
+            for (let id of obj.default) {
+                this.default.push(lodash_1.toSafeInteger(id));
+            }
+        }
+        return this;
+    }
+}
+exports.Multiple = Multiple;
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const lodash_1 = __webpack_require__(0);
+const field_1 = __webpack_require__(2);
+const interfaces_1 = __webpack_require__(1);
+class NumberOptions extends interfaces_1.ValidableObject {
+    constructor() {
+        super(...arguments);
+        this.integer = false;
+    }
+    serialize() {
+        return Object.assign({}, super.serialize(), { integer: this.integer });
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        this.integer = false;
+        if (lodash_1.isBoolean(obj.integer)) {
+            this.integer = obj.integer;
+        }
+        return this;
+    }
+}
+exports.NumberOptions = NumberOptions;
+exports.NumberType = "number";
+class Number extends field_1.Field {
+    constructor() {
+        super(...arguments);
+        this.options = new NumberOptions();
+    }
+    type() {
+        return exports.NumberType;
+    }
+    serialize() {
+        let res = Object.assign({}, super.serialize(), { options: this.options.serialize() });
+        if (!lodash_1.isNil(this.default)) {
+            res['default'] = this.default;
+        }
+        return res;
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        if (!lodash_1.isEmpty(obj.options)) {
+            this.options = new NumberOptions().deserialize(obj.options);
+        }
+        if (lodash_1.isNumber(obj.default)) {
+            this.default = lodash_1.toNumber(obj.default);
+        }
+        return this;
+    }
+}
+exports.Number = Number;
+
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const lodash_1 = __webpack_require__(0);
+const choice_1 = __webpack_require__(4);
+const interfaces_1 = __webpack_require__(1);
+class RadioOptions extends interfaces_1.ValidableObject {
+    constructor() {
+        super(...arguments);
+        this.display = 'list';
+    }
+    serialize() {
+        return Object.assign({}, super.serialize(), { display: this.display });
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        this.display = 'list';
+        if (!lodash_1.isNil(obj) && lodash_1.isString(obj.display)) {
+            this.display = obj.display;
+        }
+        return this;
+    }
+}
+exports.RadioOptions = RadioOptions;
+exports.RadioType = "radio";
+class Radio extends choice_1.ChoiceField {
+    constructor() {
+        super(...arguments);
+        this.options = new RadioOptions();
+    }
+    type() {
+        return exports.RadioType;
+    }
+    removeValue(v) {
+        super.removeValue(v);
+        if (this.isDefault(v)) {
+            this.setDefault(null);
+        }
+    }
+    isDefault(v) {
+        if (!lodash_1.isNil(this.default)) {
+            return this.default == v.id;
+        }
+        return false;
+    }
+    setDefault(v) {
+        if (lodash_1.isEmpty(v)) {
+            this.default = null;
+        }
+        else {
+            this.default = v.id;
+        }
+    }
+    serialize() {
+        let res = super.serialize();
+        if (!lodash_1.isNil(this.default)) {
+            res['default'] = this.default;
+        }
+        res['options'] = this.options.serialize();
+        return res;
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        this.options = new RadioOptions().deserialize(obj.options);
+        if (!lodash_1.isNil(obj.default)) {
+            this.default = lodash_1.toSafeInteger(obj.default);
+        }
+        return this;
+    }
+}
+exports.Radio = Radio;
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const field_1 = __webpack_require__(2);
+exports.ReferenceType = "reference";
+class Reference extends field_1.Field {
+    type() {
+        return exports.ReferenceType;
+    }
+    serialize() {
+        return Object.assign({}, super.serialize(), { form: this.form });
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        this.form = obj.form;
+        return this;
+    }
+}
+exports.Reference = Reference;
+
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const lodash_1 = __webpack_require__(0);
+const field_1 = __webpack_require__(2);
+const interfaces_1 = __webpack_require__(1);
+class TextOptions extends interfaces_1.ValidableObject {
+    constructor() {
+        super(...arguments);
+        this.textarea = false;
+        this.rows = 1;
+    }
+    serialize() {
+        return Object.assign({}, super.serialize(), { textarea: this.textarea, rows: this.rows });
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        this.textarea = false;
+        if (lodash_1.isBoolean(obj.textarea)) {
+            this.textarea = obj.textarea;
+        }
+        if (lodash_1.isInteger(obj.rows)) {
+            this.rows = obj.rows;
+        }
+        return this;
+    }
+}
+exports.TextOptions = TextOptions;
+exports.TextType = "text";
+class Text extends field_1.Field {
+    constructor() {
+        super(...arguments);
+        this.options = new TextOptions();
+    }
+    type() {
+        return exports.TextType;
+    }
+    serialize() {
+        let res = Object.assign({}, super.serialize(), { options: this.options.serialize() });
+        if (!lodash_1.isEmpty(this.default)) {
+            res['default'] = this.default;
+        }
+        return res;
+    }
+    deserialize(obj) {
+        super.deserialize(obj);
+        if (!lodash_1.isEmpty(obj.options)) {
+            this.options = new TextOptions().deserialize(obj.options);
+        }
+        if (!lodash_1.isEmpty(obj.default)) {
+            this.default = obj.default;
+        }
+        return this;
+    }
+}
+exports.Text = Text;
+
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const lodash_1 = __webpack_require__(0);
+const interfaces_1 = __webpack_require__(1);
+const state_1 = __webpack_require__(9);
 class FSM extends interfaces_1.ValidableObject {
     constructor() {
         super(...arguments);
@@ -1295,7 +1325,7 @@ exports.FSM = FSM;
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1304,13 +1334,13 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(10));
+__export(__webpack_require__(6));
 __export(__webpack_require__(1));
-__export(__webpack_require__(11));
+__export(__webpack_require__(13));
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

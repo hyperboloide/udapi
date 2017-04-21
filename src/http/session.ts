@@ -1,6 +1,6 @@
-import { isArray, isNil } from 'lodash';
+import { isArray, isNil, isObject, clone } from 'lodash';
 
-import { HTTPClient, HTTPPromise, HTTPConfig, HTTPTransformer } from './client';
+import { HTTPClient, HTTPPromise, HTTPConfig, HTTPTransformer, HTTPAPITransformer, HTTPAPIResponse } from './client';
 import { Serializable } from '../interfaces';
 
 export interface SessionConfig {
@@ -12,17 +12,39 @@ export class Session {
 
   config: SessionConfig;
   client: HTTPClient;
+  defaultTransformers: Array<HTTPTransformer> = new Array();
 
   constructor(config: SessionConfig, client: HTTPClient) {
     this.config = config;
     this.client = client;
+    let defaults = client.defaults.transformResponse;
+    this.defaultTransformers = isArray(defaults) ? defaults : [defaults];
   }
 
-  private wrapTransform(tr: HTTPTransformer): HTTPTransformer[] {
-    let defaults = this.client.defaults.transformResponse;
-    let res = isArray(defaults) ? defaults : [defaults];
-    res.push(tr);
-    return res;
+  private wrapTransform<T>(tr?: HTTPAPITransformer<T>): HTTPTransformer[] {
+    let defaults = clone(this.defaultTransformers);
+    defaults.push((data) => this.toHTTPAPIResponse(tr, data));
+    return defaults
+  }
+
+  private voidTransform(data): void {
+    return;
+  }
+
+  private toHTTPAPIResponse<T>(tr: HTTPAPITransformer<T>, data: any): HTTPAPIResponse<T>{
+    if (isNil(data) || !isObject(data)) {
+      return {errors: null, data: null };
+    } else if (isNil(data.data)) {
+      return {
+        errors: null,
+        data: tr(data),
+      };
+    } else {
+      return {
+        errors: data.errors,
+        data: !isNil(data.data) && isObject(data.data) ? tr(data.data) : null,
+      };
+    }
   }
 
   private clientConfig(tr?: HTTPTransformer): HTTPConfig {
@@ -51,20 +73,41 @@ export class Session {
     return uf.reduce((acc, p) => `${acc}${p}`);
   }
 
-  get(...urlFragments: Array<string>): HTTPPromise {
+  GET<T>(tr: HTTPAPITransformer<T>, ...urlFragments: Array<string>): HTTPPromise<T> {
     return this.client.request({
       ...this.clientConfig(),
       method: 'GET',
       url: this.joinUrlFragments(...urlFragments),
+      transformResponse: this.wrapTransform(tr),
     });
   }
 
-  post(obj: any, ...urlFragments: Array<string>): HTTPPromise {
+  POST<T>(tr: HTTPAPITransformer<T>, obj: any, ...urlFragments: Array<string>): HTTPPromise<T> {
     return this.client.request({
       ...this.clientConfig(),
       method: 'POST',
       url: this.joinUrlFragments(...urlFragments),
       data: obj,
+      transformResponse: this.wrapTransform(tr),
+    });
+  }
+
+  PUT<T>(tr: HTTPAPITransformer<T>, obj: any, ...urlFragments: Array<string>): HTTPPromise<T> {
+    return this.client.request({
+      ...this.clientConfig(),
+      method: 'PUT',
+      url: this.joinUrlFragments(...urlFragments),
+      data: obj,
+      transformResponse: this.wrapTransform(tr),
+    });
+  }
+
+  DELETE(...urlFragments: Array<string>): HTTPPromise<any> {
+    return this.client.request({
+      ...this.clientConfig(),
+      method: 'DELETE',
+      url: this.joinUrlFragments(...urlFragments),
+      transformResponse: this.wrapTransform(this.voidTransform),
     });
   }
 }
