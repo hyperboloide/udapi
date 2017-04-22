@@ -178,7 +178,6 @@ export class Form extends ValidableObject implements FieldContainer {
     let sections = {};
     this.sections.forEach((s, id) => sections[`${id}`] = s.serialize());
 
-
     return omitBy({
       ...super.serialize(),
       url: this.url,

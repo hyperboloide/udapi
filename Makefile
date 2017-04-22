@@ -17,7 +17,7 @@ es5:
 	webpack
 
 clean:
-	rm -fr $(DEST) $(DOC)
+	rm -fr $(BUILD) $(DOC)
 
 doc:
 	typedoc \

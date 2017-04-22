@@ -1,35 +1,44 @@
-import { Serializable } from '../../interfaces';
+import { isNil } from 'lodash';
+
+import { Serializable, ValidableProperty } from '../../interfaces';
 import { Field } from '../../form/field';
 
 
-export abstract class Value<T> implements Serializable {
+export abstract class Value extends ValidableProperty implements Serializable {
   readonly field: Field;
+  value?: any;
 
-  value?: T;
-
-  abstract type(): string;
-  abstract isEmpty(): boolean;
   abstract serialize(): any;
-  abstract deserialize(obj: any): Serializable;
+  abstract deserialize(obj: any): Value;
 
   constructor(field: Field) {
+    super();
     this.field = field;
+  }
+
+  type(): string {
+    return this.field.type();
   }
 
   id(): number {
     return this.field.id;
   }
 
-  get(): T {
+  isEmpty(): boolean {
+    return isNil(this.value)
+  }
+
+  get(): any {
     return this.value;
   }
 
-  set(value: T) {
+  set(value: any) {
     this.value = value;
   }
 
-  reset() {
+  reset(): Value {
     this.value = null;
+    return this;
   }
 
 }

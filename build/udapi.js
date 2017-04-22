@@ -2189,6 +2189,22 @@ var ValidableObject = (function () {
     return ValidableObject;
 }());
 exports.ValidableObject = ValidableObject;
+var ValidableProperty = (function () {
+    function ValidableProperty() {
+        this.errors = new ValidationList();
+    }
+    ValidableProperty.prototype.hasErrors = function () {
+        return !lodash_1.isNil(this.errors) && this.errors.hasErrors();
+    };
+    ValidableProperty.prototype.hasChildErrors = function () {
+        return false;
+    };
+    ValidableProperty.prototype.setErrors = function (obj) {
+        this.errors = new ValidationList().deserialize(obj);
+    };
+    return ValidableProperty;
+}());
+exports.ValidableProperty = ValidableProperty;
 
 
 /***/ })

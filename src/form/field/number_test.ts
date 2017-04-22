@@ -3,7 +3,6 @@ import { isEqual, isEmpty, isNil } from 'lodash';
 
 import { Field } from './field';
 import { Number, NumberOptions } from './number';
-import { ChoiceValue } from './choice';
 
 export const exampleNumberOptions = {integer: true};
 
