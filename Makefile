@@ -1,10 +1,19 @@
-DEST = bundle.js
+BUILD = ./build
+DEST = udapi
 DOC = doc
 SRC = src
 
-all: clean webpack doc
+# cd $(BUILD) && uglifyjs \
+# 	--compress \
+# 	--mangle \
+# 	--source-map \
+# 	--in-source-map $(DEST).js.map \
+# 	--output $(DEST).min.js  \
+# 	$(DEST).js
 
-webpack:
+all: clean es5
+
+es5:
 	webpack
 
 clean:

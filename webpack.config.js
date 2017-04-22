@@ -1,24 +1,28 @@
 module.exports = {
   entry: "./src/index.ts",
   output: {
-    library: 'udApi',
-    libraryTarget: 'commonjs',
-    filename: 'bundle.js',
-    path: __dirname
+    library: 'udapi',
+    libraryTarget: 'umd',
+    filename: 'udapi.js',
+    path: `${__dirname}/build`
   },
   externals: {
-    "lodash": true,
-    "axios": true,
+    "lodash": {
+      commonjs: "lodash",
+      amd: "lodash",
+      root: "_"
+    }
   },
   resolve: {
     extensions: ['.ts']
   },
+  devtool: 'source-map',
   module: {
     loaders: [
       {
         test: /.ts$/,
         loader: 'awesome-typescript-loader',
-      }
+      },
     ]
   }
 };

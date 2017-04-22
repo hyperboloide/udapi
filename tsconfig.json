@@ -1,9 +1,19 @@
 {
     "compilerOptions": {
+        "downlevelIteration": true,
         "module": "commonjs",
-        "target": "es6",
+        "target": "es5",
         "noImplicitAny": false,
-        "sourceMap": false
+        "sourceMap": true,
+        "lib": [
+            "es5",
+            "es6",
+            "dom"
+        ]
     },
+    "exclude": [
+        "node_modules",
+         "**/*_test.ts"
+    ],
     "compileOnSave": false
 }

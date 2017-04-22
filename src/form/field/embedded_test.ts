@@ -56,7 +56,7 @@ describe('field embedded', () => {
   it('should serialize', () => {
     let f = new Embedded(42).deserialize(exampleEmbedded);
     let obj = f.serialize();
-    
+
     expect(isEqual(obj, exampleEmbedded)).to.equal(true);
   });
 
