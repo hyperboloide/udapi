@@ -1,0 +1,32 @@
+<html>
+  <body>
+
+    <strong>Open the console...</strong>
+
+    <script src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="/build/udapi.min.js"></script>
+
+    <script>
+      var form = new udapi.Form();
+      console.log(form.serialize())
+      form.name = "test form";
+      form.addState('first');
+      form.addField('text', 'name');
+      console.log(form.serialize())
+
+      // let config = {
+      //
+      //   baseURL: "http://localhost:3000",
+      // }
+      // console.log(udapi)
+      // s = new udapi.Session(config, axios.create());
+      //
+      // udapi.Insert(s, form).then((resp) => {
+      //   console.log(resp.data.data);
+      // })
+    </script>
+
+  </body>
+
+</html>

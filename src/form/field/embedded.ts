@@ -1,8 +1,9 @@
-import { isEmpty, toSafeInteger, isObject, each, isNumber } from 'lodash';
+import { isEmpty, toSafeInteger, isObject, each, isNumber, has } from 'lodash';
 
 import { Field, extract } from '.';
 import { Display } from '../display';
 import { ValidableObject } from '../../interfaces';
+import { FieldContainer } from '.';
 
 
 export class EmbeddedOptions extends ValidableObject {
@@ -31,14 +32,16 @@ export class EmbeddedOptions extends ValidableObject {
   }
 }
 
-export class Embedded extends Field {
+export const EmbeddedType = "embedded";
+
+export class Embedded extends Field implements FieldContainer {
 
   fields: Map<number, Field> = new Map();
   display: Display = new Display();
   options: EmbeddedOptions = new EmbeddedOptions();
 
   type(): string {
-    return "embedded";
+    return EmbeddedType;
   }
 
   isEmpty(): boolean {
@@ -49,8 +52,49 @@ export class Embedded extends Field {
     return this.fields.has(id);
   }
 
+  hasFieldsOfType(t: string): boolean {
+    for (let [id, field] of this.fields) {
+      if (field.type() == t) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   getField(id: number): Field {
     return this.fields.get(id);
+  }
+
+  getFieldsOfType(t: string): Array<Field> {
+    let res = new Array<Field>();
+    for (let [id, field] of this.fields) {
+      if (field.type() == t) {
+        res.push(field);
+      }
+    }
+    return res;
+  }
+
+  hasChildErrors(): boolean {
+    for (let child of this.fields.values()) {
+      if (child.hasErrors()) {
+          return true;
+        }
+    }
+    return false;
+  }
+
+  setErrors(obj: any) {
+    super.setErrors(obj);
+    if (has(obj, 'fields.items')) {
+      let items = obj.fields.items;
+      each(items, (v, k) => {
+        let id = toSafeInteger(k)
+        if (this.hasField(id)) {
+          this.getField(id).setErrors(v);
+        }
+      });
+    }
   }
 
   serialize(): any {

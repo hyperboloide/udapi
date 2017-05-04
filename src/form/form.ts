@@ -1,18 +1,18 @@
-import { isEmpty, isObject, each, toSafeInteger } from 'lodash';
+import { isEmpty, isObject, each, toSafeInteger, omitBy, isNil } from 'lodash';
 
 import { ValidableObject } from '../interfaces';
 import { User } from '../user/user';
 import { Section } from './section';
-import { Field, extract, create, Embedded } from './field';
-import { FSM } from './fsm';
+import { Field, FieldContainer, extract, create, Embedded } from './field';
+import { FSM, State } from './fsm';
 import { Displayable, Display } from './display';
 
 
-export class Form extends ValidableObject {
+export class Form extends ValidableObject implements FieldContainer {
   url: string = "";
   owner: User;
-  created: Date;
-  updated: Date;
+  created?: Date;
+  updated?: Date;
   proto: number = 2;
   version: number = 0;
   states: boolean = false;
@@ -22,7 +22,7 @@ export class Form extends ValidableObject {
   fields: Map<number, Field> = new Map();
   sections: Map<number, Section> = new Map();
   display: Display = new Display();
-  fsm: FSM;
+  fsm: FSM = new FSM();
 
   private _nextid: number = 0;
 
@@ -42,17 +42,44 @@ export class Form extends ValidableObject {
     return this.fields.has(id);
   }
 
-  private createField(type, name: string = ''): Field {
-    let f = create(this.nextid(), type);
-    return f;
+  hasEmbeddedField(id: number): boolean {
+    for (let emb of this.getEmbeddeds()) {
+      if (emb.hasField(id)) {
+        return true;
+      }
+    }
+    return false;
   }
 
-  addField(type, name: string = ''): Field {
-    let f = this.createField(type, name);
+  hasFieldsOfType(t: string): boolean {
+    for (let [id, field] of this.fields) {
+      if (field.type() == t) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  hasEmbeddedFieldsOfType(t: string): boolean {
+    for (let emb of this.getEmbeddeds()) {
+      if (emb.hasFieldsOfType(t)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  addField(type, name: string = '', state?: State): Field {
+    let f = create(this.nextid(), type);
+    f.name = name;
     this.fields.set(f.id, f);
     this.display.add(f);
 
-    this.fsm.addField(f);
+    if (isNil(state)) {
+      this.fsm.addField(f);
+    } else {
+      state.addField(f);
+    }
     return f;
   }
 
@@ -60,7 +87,8 @@ export class Form extends ValidableObject {
     if (!this.hasField(emb.id)) {
       return;
     }
-    let f = this.createField(type, name);
+    let f = create(this.nextid(), type);
+    f.name = name;
     emb.fields.set(f.id, f);
     emb.display.add(f);
 
@@ -71,6 +99,16 @@ export class Form extends ValidableObject {
 
   getField(id: number): Field {
     return this.fields.get(id);
+  }
+
+  getFieldsOfType(t: string): Array<Field> {
+    let res = new Array<Field>();
+    for (let [id, field] of this.fields) {
+      if (field.type() == t) {
+        res.push(field);
+      }
+    }
+    return res;
   }
 
   getEmbeddedField(id: number): [Embedded, Field] {
@@ -84,11 +122,11 @@ export class Form extends ValidableObject {
 
   getEmbeddeds(): Array<Embedded> {
     let res = new Array<Embedded>();
-    this.fields.forEach((f, id) => {
-      if (f.type() == "embedded" && (<Embedded>f)) {
-        res.push((<Embedded>f));
+    for (let [id, field] of this.fields) {
+      if (field.type() == "embedded" && (<Embedded>field)) {
+        res.push((<Embedded>field));
       }
-    });
+    }
     return res;
   }
 
@@ -126,6 +164,13 @@ export class Form extends ValidableObject {
     this.display.remove(s);
   }
 
+  addState(name: string): State {
+    let s = new State(this.nextid());
+    s.name = name;
+    this.fsm.add(s);
+    return s;
+  }
+
   serialize(): any {
     let fields = {};
     this.fields.forEach((f, id) => fields[`${id}`] = f.serialize());
@@ -133,12 +178,12 @@ export class Form extends ValidableObject {
     let sections = {};
     this.sections.forEach((s, id) => sections[`${id}`] = s.serialize());
 
-    return {
+    return omitBy({
       ...super.serialize(),
       url: this.url,
-      owner: this.owner.serialize(),
-      created: this.created.toJSON(),
-      updated: this.updated.toJSON(),
+      owner: this.owner ? this.owner.serialize() : null,
+      created: this.created ? this.created.toJSON() : null,
+      updated: this.updated? this.updated.toJSON() : null,
       proto: this.proto,
       version: this.version,
       states: this.states,
@@ -149,7 +194,7 @@ export class Form extends ValidableObject {
       display: this.display.serialize(),
       fsm: this.fsm.serialize(),
       nextid: this._nextid,
-    }
+    }, isNil)
   }
 
   deserialize(obj: any): Form {
@@ -162,10 +207,10 @@ export class Form extends ValidableObject {
     if (isObject(obj.owner)) {
       this.owner = new User().deserialize(obj.owner);
     }
-    if (!isEmpty('created')) {
+    if (!isNil(obj.created)) {
       this.created = new Date(obj.created);
     }
-    if (!isEmpty('updated')) {
+    if (!isNil(obj.updated)) {
       this.updated = new Date(obj.updated);
     }
 
@@ -173,7 +218,9 @@ export class Form extends ValidableObject {
     this.version = obj.version;
     this.states = obj.states;
     this.name = obj.name;
-    this.description = obj.description;
+    if (!isNil(obj.description)) {
+      this.description = obj.description;
+    }
 
     this.fields = new Map();
     each(obj.fields, (v, k) => {

@@ -1,8 +1,8 @@
 import { Serializable } from './basic';
 
-import { each, isArray, isObject, toSafeInteger, isEmpty } from 'lodash';
+import { each, isArray, isObject, toSafeInteger, isEmpty, isNil } from 'lodash';
 
-export interface ValidationContainer extends Serializable {
+export interface ValidationContainer {
   errors: any;
   hasErrors(): boolean;
   setErrors(errors: any);
@@ -110,5 +110,21 @@ export class ValidableObject implements ValidationContainer, Serializable {
       });
     }
     return this;
+  }
+}
+
+export class ValidableProperty implements ValidationContainer {
+  errors: ValidationContainer = new ValidationList();
+
+  hasErrors(): boolean {
+    return !isNil(this.errors) && this.errors.hasErrors();
+  }
+
+  hasChildErrors(): boolean {
+    return false;
+  }
+
+  setErrors(obj: any) {
+    this.errors = new ValidationList().deserialize(obj);
   }
 }

@@ -1,13 +1,16 @@
-import { isEmpty, } from 'lodash';
+import { isBoolean, isEmpty, isString } from 'lodash';
 
 import { Field } from './field';
+
+
+export const BooleanType = "boolean";
 
 export class Boolean extends Field {
   label: string;
   default: boolean;
 
   type(): string {
-    return "boolean";
+    return BooleanType;
   }
 
   serialize(): any {
@@ -15,7 +18,7 @@ export class Boolean extends Field {
     if (!isEmpty(this.label)) {
       res['label'] = this.label;
     }
-    if (!isEmpty(this.default)) {
+    if (isBoolean(this.default)) {
       res['default'] = this.default;
     }
     return res;
@@ -23,10 +26,10 @@ export class Boolean extends Field {
 
   deserialize(obj: any): Boolean {
     super.deserialize(obj);
-    if (!isEmpty(this.label)) {
+    if (!isEmpty(obj.label) && isString(obj.label)) {
       this.label = obj.label;
     }
-    if (!isEmpty(this.default)) {
+    if (isBoolean(obj.default)) {
       this.default = obj.default;
     }
     return this;

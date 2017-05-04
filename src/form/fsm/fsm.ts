@@ -1,4 +1,4 @@
-import { each, toSafeInteger, isObject, has } from 'lodash';
+import { each, toSafeInteger, isObject, has, isNil } from 'lodash';
 
 import { ValidableObject } from '../../interfaces';
 import { State } from './state';
@@ -6,7 +6,7 @@ import { Field } from '../field';
 
 export class FSM extends ValidableObject {
   initial: State;
-  states: Map<number, State>;
+  states: Map<number, State> = new Map();
 
   has(id: number): boolean {
     return this.states.has(id);
@@ -27,6 +27,9 @@ export class FSM extends ValidableObject {
   add(state: State) {
     if (!this.has(state.id)) {
       this.states.set(state.id, state);
+      if (isNil(this.initial)) {
+        this.initial = state;
+      }
     }
   }
 
