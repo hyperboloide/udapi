@@ -4,11 +4,16 @@
   "description": "Usine Data API client",
   "author": "Hyperboloide",
   "main": "build/udapi.js",
-  "private": true,
+  "private": false,
+  "bugs": {
+    "url": "https://github.com/hyperboloide/udapi/issues",
+  },
+  "homepage": "https://github.com/hyperboloide/udapi",
   "repository": {
     "type": "git",
-    "url": "https://dev.hyperboloide.com/fred/ud.api_ts.git"
+    "url": "https://github.com/hyperboloide/udapi.git"
   },
+  "license": "MIT",
   "scripts": {
     "test": "make test",
     "build": "make",
