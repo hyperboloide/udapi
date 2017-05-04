@@ -3,9 +3,9 @@ DEST = udapi
 DOC = doc
 SRC = src
 
-all: clean es5
+all: clean js
 
-es5:
+js:
 	webpack
 
 clean:
@@ -21,6 +21,9 @@ doc:
 		--excludePrivate \
 		--hideGenerator \
 		--out $(DOC) $(SRC)
+
+test:
+	mocha --recursive -r ts-node/register `find src -name '*_test.ts'`
 
 patch:
 	npm version patch

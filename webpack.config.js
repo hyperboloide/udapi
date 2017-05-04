@@ -1,8 +1,10 @@
 webpack = require('webpack')
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
-const banner = new webpack.BannerPlugin(`Usine Data api client library.
-Copyright © 2015-${new Date().getUTCFullYear()} Hyperboloide. All rights reserved.`)
+const target = 'udapi';
+
+const banner = new webpack.BannerPlugin(`Usine Data API client.
+Copyright © 2015-${new Date().getUTCFullYear()} Hyperboloide. All rights reserved.`);
 
 const externals = {
   "lodash": {
@@ -15,9 +17,9 @@ const externals = {
 minfiedEs5 = {
   entry: "./src/index.ts",
   output: {
-    library: 'udapi',
+    library: target,
     libraryTarget: 'umd',
-    filename: 'udapi.min.js',
+    filename: target + '.min.js',
     path: `${__dirname}/build`
   },
   externals: externals,
@@ -46,9 +48,9 @@ minfiedEs5 = {
 normalEs5 = {
   entry: "./src/index.ts",
   output: {
-    library: 'udapi',
+    library: target,
     libraryTarget: 'umd',
-    filename: 'udapi.js',
+    filename: target + '.js',
     path: `${__dirname}/build`
   },
   externals: externals,

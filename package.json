@@ -1,8 +1,8 @@
 {
   "name": "udapi",
   "version": "0.4.2",
-  "description": "Usine Data api client library",
-  "author": "hyperboloide",
+  "description": "Usine Data API client",
+  "author": "Hyperboloide",
   "main": "build/udapi.js",
   "private": true,
   "repository": {
@@ -10,12 +10,11 @@
     "url": "https://dev.hyperboloide.com/fred/ud.api_ts.git"
   },
   "scripts": {
-    "test": "mocha --recursive -r ts-node/register `find src -name '*_test.ts'`",
+    "test": "make test",
     "build": "make",
     "prepublish": "make",
     "doc": "http-server doc --silent",
-    "demo": "http-server .",
-    "toto": "tsc src/index.ts"
+    "demo": "http-server ."
   },
   "devDependencies": {
     "@types/chai": "^3.4.35",

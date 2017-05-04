@@ -1,5 +1,5 @@
 /*!
- * Usine Data api client library.
+ * Usine Data API client.
  * Copyright © 2015-2017 Hyperboloide. All rights reserved.
  */
 (function webpackUniversalModuleDefinition(root, factory) {
