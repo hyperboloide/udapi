@@ -1,3 +1,7 @@
+/*!
+ * Usine Data api client library.
+ * Copyright © 2015-2017 Hyperboloide. All rights reserved.
+ */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require(undefined));

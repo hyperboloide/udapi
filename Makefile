@@ -3,14 +3,6 @@ DEST = udapi
 DOC = doc
 SRC = src
 
-# cd $(BUILD) && uglifyjs \
-# 	--compress \
-# 	--mangle \
-# 	--source-map \
-# 	--in-source-map $(DEST).js.map \
-# 	--output $(DEST).min.js  \
-# 	$(DEST).js
-
 all: clean es5
 
 es5:
